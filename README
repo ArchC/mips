@@ -1,0 +1,69 @@
+This is the MIPS-I ArchC functional model.
+
+This model has the system call emulation functions implemented,
+so it is a good idea to turn on the ABI option.
+
+To use acsim, the interpreted simulator:
+
+    acsim mips1.ac -abi -dy             (create the simulator)
+    make -f Makefile.archc              (compile)
+    mips1.x --load=<file-path> [args]   (run an application)
+
+To use accsim, the compiled simulator:
+
+    accsim mips1.ac -abi -dy <file-path> (create specialized simulator)
+    make -f Makefile.archc               (compile)
+    mips1.x [args]                       (run the application)
+
+The [args] are optional arguments for the application.
+
+There are two formats recognized for application <file-path>:
+- ELF binary matching ArchC specifications
+- hexadecimal text file for ArchC
+
+
+To use acasm, the assembler generator:
+
+    asmgen.sh mips1.ac <assembler_name> (generate the assembler 
+                                         source files) 
+    proceed to build it using the GNU autotools (configure, make all-gas, 
+                                                 make install-gas)
+
+
+For more information visit http://www.archc.org
+
+
+CHANGELOG:
+==========
+Version 0.7.5
+
+ - Added 'bgtu' pseudo-insn
+ - Added alternative assembly syntaxes to the lwl and lwr instructions
+ - Fixed the operand encoding of the nop 'instruction'
+
+
+Version 0.7.4:
+
+- Included assembly language syntax information
+
+
+Version 0.7.3:
+
+- Use ArchC support for debug messages: ac_debug_model.H
+- Use operator[] syntax to read register banks, which is faster
+
+
+Version 0.7.2:
+
+- Included optimization instruction methods for compiled simulation
+- Separate nop instruction from sll to optimize simulation
+
+
+Version 0.7.1:
+
+- Included file for GDB integration
+
+
+Version 0.7.0:
+
+- Model passed selected Mediabench and Mibench applications

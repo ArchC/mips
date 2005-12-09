@@ -37,9 +37,9 @@ CHANGELOG:
 ==========
 Version 0.7.5
 
- - Added 'bgtu' pseudo-insn
- - Added alternative assembly syntaxes to the lwl and lwr instructions
- - Fixed the operand encoding of the nop 'instruction'
+- Added 'bgtu' pseudo-insn
+- Added alternative assembly syntaxes to the lwl and lwr instructions
+- Fixed the operand encoding of the nop 'instruction'
 
 
 Version 0.7.4:

@@ -1,3 +1,24 @@
+/**
+ * @file      mips1_gdb_funcs.cpp
+ * @author    Sandro Rigo
+ *            Marcus Bartholomeu
+ *
+ *            The ArchC Team
+ *            http://www.archc.org/
+ *
+ *            Computer Systems Laboratory (LSC)
+ *            IC-UNICAMP
+ *            http://www.lsc.ic.unicamp.br/
+ *
+ * @version   version?
+ * @date      Mon, 19 Jun 2006 15:33:29 -0300
+ * 
+ * @brief     The ArchC MIPS-I functional model.
+ * 
+ * @attention Copyright (C) 2002-2006 --- The ArchC Team
+ *
+ */
+
 #include "mips1.H"
 
 int mips1::nRegs(void) {

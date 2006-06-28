@@ -11,7 +11,7 @@
  *            http://www.lsc.ic.unicamp.br/
  *
  * @version   version?
- * @date      Mon, 19 Jun 2006 15:33:29 -0300
+ * @date      Mon, 19 Jun 2006 15:50:52 -0300
  * 
  * @brief     The ArchC MIPS-I functional model.
  * 
@@ -20,7 +20,10 @@
  */
 
 #include "mips1_syscall.H"
-#include "ac_resources.H"
+
+// 'using namespace' statement to allow access to all
+// mips1-specific datatypes
+using namespace mips1_parms;
 
 void mips1_syscall::get_buffer(int argn, unsigned char* buf, unsigned int size)
 {

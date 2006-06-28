@@ -1,7 +1,8 @@
 /**
- * @file      mips1-isa.cpp
+ * @file      mips1_isa.cpp
  * @author    Sandro Rigo
  *            Marcus Bartholomeu
+ *            Alexandro Baldassin (acasm information)
  *
  *            The ArchC Team
  *            http://www.archc.org/
@@ -11,16 +12,17 @@
  *            http://www.lsc.ic.unicamp.br/
  *
  * @version   version?
- * @date      Mon, 19 Jun 2006 15:33:29 -0300
+ * @date      Mon, 19 Jun 2006 15:50:52 -0300
  * 
- * @brief     The ArchC MIPS-I functional model.
+ * @brief     The ArchC i8051 functional model.
  * 
  * @attention Copyright (C) 2002-2006 --- The ArchC Team
  *
  */
 
-#include  "mips1-isa.H"
-#include  "ac_isa_init.cpp"
+#include  "mips1_isa.H"
+#include  "mips1_isa_init.cpp"
+#include  "mips1_bhv_macros.H"
 
 
 //If you want debug information for this model, uncomment next line
@@ -34,7 +36,10 @@
 #define Lo 32
 #define Hi 33
 
- 
+// 'using namespace' statement to allow access to all
+// mips1-specific datatypes
+using namespace mips1_parms;
+
 //!Generic instruction behavior method.
 void ac_behavior( instruction )
 { 
@@ -695,7 +700,7 @@ void ac_behavior( bgezal )
 void ac_behavior( sys_call )
 {
   dbg_printf("syscall\n");
-  ac_stop();
+  stop();
 }
 
 //!Instruction instr_break behavior method.

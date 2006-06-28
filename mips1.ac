@@ -22,7 +22,7 @@
 
 AC_ARCH(mips1){
 
-  ac_mem     DM:5M;
+  ac_mem   DM:5M;
   ac_regbank RB:34;
 
   ac_wordsize 32;

@@ -20,7 +20,7 @@ To generate binary utilities use:
 
     acbingen.sh -i<abs-install-path> -a<arch-name> mips1.ac
 
-This will generate the tools source files using the architeture
+This will generate the tools source files using the architecture
 name <arch-name> (if omitted, mips1 is used), copy them to the
 binutils source tree, build and install them into the directory
 <abs-install-path> (which -must- be an absolute path).
@@ -33,12 +33,18 @@ For more information visit http://www.archc.org
 
 CHANGELOG:
 ==========
-Version 0.7.5-archc2.0beta1
+
+Version 0.7.6-archc2.0beta3:
+
+- Added license headers
+
+
+Version 0.7.5-archc2.0beta1:
 
 - Model compliant with ArchC 2.0beta1
 
 
-Version 0.7.5
+Version 0.7.5:
 
 - Added 'bgtu' pseudo-insn
 - Added alternative assembly syntaxes to the lwl and lwr instructions

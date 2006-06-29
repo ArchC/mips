@@ -11,7 +11,7 @@
  *            IC-UNICAMP
  *            http://www.lsc.ic.unicamp.br/
  *
- * @version   version?
+ * @version   1.0
  * @date      Mon, 19 Jun 2006 15:50:52 -0300
  * 
  * @brief     The ArchC MIPS-I functional model.

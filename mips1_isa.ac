@@ -1,5 +1,5 @@
 /**
- * @file      file?
+ * @file      mips1_isa.ac
  * @author    Sandro Rigo
  *            Marcus Bartholomeu
  *            Alexandro Baldassin (acasm information)
@@ -11,8 +11,8 @@
  *            IC-UNICAMP
  *            http://www.lsc.ic.unicamp.br/
  *
- * @version   version?
- * @date      date?
+ * @version   1.0
+ * @date      Thu, 29 Jun 2006 14:49:08 -0300
  * 
  * @brief     The ArchC MIPS-I functional model.
  * 

@@ -272,7 +272,7 @@ AC_ISA(mips1){
     sys_call.set_asm("syscall");
     sys_call.set_decoder(op=0x00, func=0x0C);
   
-    instr_break.set_asm("break");
+    instr_break.set_asm("break", rt=0);
     instr_break.set_asm("break %imm", rt);
     instr_break.set_decoder(op=0x00, func=0x0D);
 

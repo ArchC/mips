@@ -37,6 +37,7 @@ CHANGELOG:
 Version 0.7.6-archc2.0beta3:
 
 - Added license headers
+- Changed the assembly information for 'break' instruction
 
 
 Version 0.7.5-archc2.0beta1:

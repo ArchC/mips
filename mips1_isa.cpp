@@ -33,8 +33,6 @@
 //!User defined macros to reference registers.
 #define Ra 31
 #define Sp 29
-#define Lo 32
-#define Hi 33
 
 // 'using namespace' statement to allow access to all
 // mips1-specific datatypes
@@ -44,8 +42,10 @@ using namespace mips1_parms;
 void ac_behavior( instruction )
 { 
   dbg_printf("----- PC=%#x ----- %lld\n", (int) ac_pc, ac_instr_counter);
+  //  dbg_printf("----- PC=%#x NPC=%#x ----- %lld\n", (int) ac_pc, (int)npc, ac_instr_counter);
 #ifndef NO_NEED_PC_UPDATE
-  ac_pc = ac_pc +4;
+  ac_pc = npc;
+  npc = ac_pc + 4;
 #endif 
 };
  
@@ -59,6 +59,13 @@ void ac_behavior(begin)
 {
   dbg_printf("@@@ begin behavior @@@\n");
   RB[0] = 0;
+  npc = ac_pc + 4;
+
+  // Is is not required by the architecture, but makes debug really easier
+  for (int regNum = 0; regNum < 32; regNum ++)
+    RB[regNum] = 0;
+  hi = 0;
+  lo = 0;
 }
 
 //!Behavior called after finishing simulation
@@ -454,11 +461,11 @@ void ac_behavior( mult )
 
   half_result = (result & 0xFFFFFFFF);
   // Register LO receives 32 less significant bits
-  RB[Lo] = half_result;
+  lo = half_result;
 
   half_result = ((result >> 32) & 0xFFFFFFFF);
   // Register HI receives 32 most significant bits
-  RB[Hi] = half_result ;
+  hi = half_result ;
 
   dbg_printf("Result = %#llx\n", result);
 };
@@ -476,11 +483,11 @@ void ac_behavior( multu )
 
   half_result = (result & 0xFFFFFFFF);
   // Register LO receives 32 less significant bits
-  RB[Lo] = half_result;
+  lo = half_result;
 
   half_result = ((result>>32) & 0xFFFFFFFF);
   // Register HI receives 32 most significant bits
-  RB[Hi] = half_result ;
+  hi = half_result ;
 
   dbg_printf("Result = %#llx\n", result);
 };
@@ -490,9 +497,9 @@ void ac_behavior( div )
 {
   dbg_printf("div r%d, r%d\n", rs, rt);
   // Register LO receives quotient
-  RB[Lo] = (ac_Sword) RB[rs] / (ac_Sword) RB[rt];
+  lo = (ac_Sword) RB[rs] / (ac_Sword) RB[rt];
   // Register HI receives remainder
-  RB[Hi] = (ac_Sword) RB[rs] % (ac_Sword) RB[rt];
+  hi = (ac_Sword) RB[rs] % (ac_Sword) RB[rt];
 };
 
 //!Instruction divu behavior method.
@@ -500,16 +507,16 @@ void ac_behavior( divu )
 {
   dbg_printf("divu r%d, r%d\n", rs, rt);
   // Register LO receives quotient
-  RB[Lo] = RB[rs] / RB[rt];
+  lo = RB[rs] / RB[rt];
   // Register HI receives remainder
-  RB[Hi] = RB[rs] % RB[rt];
+  hi = RB[rs] % RB[rt];
 };
 
 //!Instruction mfhi behavior method.
 void ac_behavior( mfhi )
 {
   dbg_printf("mfhi r%d\n", rd);
-  RB[rd] = RB[Hi];
+  RB[rd] = hi;
   dbg_printf("Result = %#x\n", RB[rd]);
 };
 
@@ -517,15 +524,15 @@ void ac_behavior( mfhi )
 void ac_behavior( mthi )
 {
   dbg_printf("mthi r%d\n", rs);
-  RB[Hi] = RB[rs];
-  dbg_printf("Result = %#x\n", RB[Hi]);
+  hi = RB[rs];
+  dbg_printf("Result = %#x\n", hi);
 };
 
 //!Instruction mflo behavior method.
 void ac_behavior( mflo )
 {
   dbg_printf("mflo r%d\n", rd);
-  RB[rd] = RB[Lo];
+  RB[rd] = lo;
   dbg_printf("Result = %#x\n", RB[rd]);
 };
 
@@ -533,8 +540,8 @@ void ac_behavior( mflo )
 void ac_behavior( mtlo )
 {
   dbg_printf("mtlo r%d\n", rs);
-  RB[Lo] = RB[rs];
-  dbg_printf("Result = %#x\n", RB[Lo]);
+  lo = RB[rs];
+  dbg_printf("Result = %#x\n", lo);
 };
 
 //!Instruction j behavior method.
@@ -543,7 +550,7 @@ void ac_behavior( j )
   dbg_printf("j %d\n", addr);
   addr = addr << 2;
 #ifndef NO_NEED_PC_UPDATE
-  ac_pc = delay( (ac_pc & 0xF0000000) | addr , 1);
+  npc =  (ac_pc & 0xF0000000) | addr;
 #endif 
   dbg_printf("Target = %#x\n", (ac_pc & 0xF0000000) | addr );
 };
@@ -559,7 +566,7 @@ void ac_behavior( jal )
 	
   addr = addr << 2;
 #ifndef NO_NEED_PC_UPDATE
-  ac_pc = delay( (ac_pc & 0xF0000000) | addr , 1);
+  npc = (ac_pc & 0xF0000000) | addr;
 #endif 
 	
   dbg_printf("Target = %#x\n", (ac_pc & 0xF0000000) | addr );
@@ -573,7 +580,7 @@ void ac_behavior( jr )
   // Jump to the address stored on the register reg[RS]
   // It must also flush the instructions that were loaded into the pipeline
 #ifndef NO_NEED_PC_UPDATE
-  ac_pc = delay(RB[rs], 1);
+  npc = RB[rs], 1;
 #endif 
   dbg_printf("Target = %#x\n", RB[rs]);
 };
@@ -586,7 +593,7 @@ void ac_behavior( jalr )
   // jump to the address given by [rs]
 
 #ifndef NO_NEED_PC_UPDATE
-  ac_pc = delay(RB[rs], 1);
+  npc = RB[rs], 1;
 #endif 
   dbg_printf("Target = %#x\n", RB[rs]);
 
@@ -602,7 +609,7 @@ void ac_behavior( beq )
   dbg_printf("beq r%d, r%d, %d\n", rt, rs, imm & 0xFFFF);
   if( RB[rs] == RB[rt] ){
 #ifndef NO_NEED_PC_UPDATE
-    ac_pc = delay(ac_pc + (imm<<2), 1);
+    npc = ac_pc + (imm<<2);
 #endif 
     dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
   }	
@@ -614,7 +621,7 @@ void ac_behavior( bne )
   dbg_printf("bne r%d, r%d, %d\n", rt, rs, imm & 0xFFFF);
   if( RB[rs] != RB[rt] ){
 #ifndef NO_NEED_PC_UPDATE
-    ac_pc = delay(ac_pc + (imm<<2), 1);
+    npc = ac_pc + (imm<<2);
 #endif 
     dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
   }	
@@ -626,7 +633,7 @@ void ac_behavior( blez )
   dbg_printf("blez r%d, %d\n", rs, imm & 0xFFFF);
   if( (RB[rs] == 0 ) || (RB[rs]&0x80000000 ) ){
 #ifndef NO_NEED_PC_UPDATE
-    ac_pc = delay(ac_pc + (imm<<2), 1);
+    npc = ac_pc + (imm<<2), 1;
 #endif 
     dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
   }	
@@ -638,7 +645,7 @@ void ac_behavior( bgtz )
   dbg_printf("bgtz r%d, %d\n", rs, imm & 0xFFFF);
   if( !(RB[rs] & 0x80000000) && (RB[rs]!=0) ){
 #ifndef NO_NEED_PC_UPDATE
-    ac_pc = delay(ac_pc + (imm<<2), 1);
+    npc = ac_pc + (imm<<2);
 #endif 
     dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
   }	
@@ -650,7 +657,7 @@ void ac_behavior( bltz )
   dbg_printf("bltz r%d, %d\n", rs, imm & 0xFFFF);
   if( RB[rs] & 0x80000000 ){
 #ifndef NO_NEED_PC_UPDATE
-    ac_pc = delay(ac_pc + (imm<<2), 1);
+    npc = ac_pc + (imm<<2);
 #endif 
     dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
   }	
@@ -662,7 +669,7 @@ void ac_behavior( bgez )
   dbg_printf("bgez r%d, %d\n", rs, imm & 0xFFFF);
   if( !(RB[rs] & 0x80000000) ){
 #ifndef NO_NEED_PC_UPDATE
-    ac_pc = delay(ac_pc + (imm<<2), 1);
+    npc = ac_pc + (imm<<2);
 #endif 
     dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
   }	
@@ -675,7 +682,7 @@ void ac_behavior( bltzal )
   RB[Ra] = ac_pc+4; //ac_pc is pc+4, we need pc+8
   if( RB[rs] & 0x80000000 ){
 #ifndef NO_NEED_PC_UPDATE
-    ac_pc = delay(ac_pc + (imm<<2), 1);
+    npc = ac_pc + (imm<<2);
 #endif 
     dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
   }	
@@ -689,7 +696,7 @@ void ac_behavior( bgezal )
   RB[Ra] = ac_pc+4; //ac_pc is pc+4, we need pc+8
   if( !(RB[rs] & 0x80000000) ){
 #ifndef NO_NEED_PC_UPDATE
-    ac_pc = delay(ac_pc + (imm<<2), 1);
+    npc = ac_pc + (imm<<2);
 #endif 
     dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
   }	

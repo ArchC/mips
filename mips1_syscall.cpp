@@ -65,6 +65,7 @@ void mips1_syscall::set_int(int argn, int val)
 void mips1_syscall::return_from_syscall()
 {
   ac_pc = RB[31];
+  npc = ac_pc + 4;
 }
 
 void mips1_syscall::set_prog_args(int argc, char **argv)

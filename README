@@ -5,7 +5,7 @@ so it is a good idea to turn on the ABI option.
 
 To use acsim, the interpreted simulator:
 
-    acsim mips1.ac -abi -dy             (create the simulator)
+    acsim mips1.ac -abi                 (create the simulator)
     make -f Makefile.archc              (compile)
     mips1.x --load=<file-path> [args]   (run an application)
 
@@ -33,6 +33,10 @@ For more information visit http://www.archc.org
 
 CHANGELOG:
 ==========
+
+Version 0.7.7-archc2.0beta3:
+- Removed delayed assignements by creating the npc register
+- Created lo and hi registers and removed them from RB[32] and RB[33]
 
 Version 0.7.6-archc2.0beta3:
 

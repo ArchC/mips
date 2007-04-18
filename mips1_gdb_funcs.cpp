@@ -36,8 +36,10 @@ ac_word mips1::reg_read( int reg ) {
   if ( ( reg >= 0 ) && ( reg < 32 ) )
     return RB.read( reg );
   else {
-    if ( ( reg >= 33 ) && ( reg < 35 ) )
-      return RB.read( reg - 1 );
+    if (reg == 33)
+      return lo;
+    else if (reg == 34)
+      return hi;
     else
       /* pc */
       if ( reg == 37 )

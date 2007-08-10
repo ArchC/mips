@@ -56,60 +56,60 @@ AC_ISA(mips1){
     
     lb.set_asm("lb %reg, \%lo(%exp)(%reg)", rt, imm, rs);
     lb.set_asm("lb %reg, (%reg)", rt, rs, imm=0);
-    lb.set_asm("lb %reg, %imm(%reg)", rt, imm, rs);
+    lb.set_asm("lb %reg, %imm (%reg)", rt, imm, rs);
     lb.set_decoder(op=0x20);
 
     lbu.set_asm("lbu %reg, \%lo(%exp)(%reg)", rt, imm, rs);
     lbu.set_asm("lbu %reg, (%reg)", rt, rs, imm=0);
-    lbu.set_asm("lbu %reg, %imm(%reg)", rt, imm, rs);
+    lbu.set_asm("lbu %reg, %imm (%reg)", rt, imm, rs);
     lbu.set_decoder(op=0x24);
 
     lh.set_asm("lh %reg, \%lo(%exp)(%reg)", rt, imm, rs);
     lh.set_asm("lh %reg, (%reg)", rt, rs, imm=0);
-    lh.set_asm("lh %reg, %imm(%reg)", rt, imm, rs);
+    lh.set_asm("lh %reg, %imm (%reg)", rt, imm, rs);
     lh.set_decoder(op=0x21);
 
     lhu.set_asm("lhu %reg, \%lo(%exp)(%reg)", rt, imm, rs);
     lhu.set_asm("lhu %reg, (%reg)", rt, rs, imm=0);
-    lhu.set_asm("lhu %reg, %imm(%reg)", rt, imm, rs);
+    lhu.set_asm("lhu %reg, %imm (%reg)", rt, imm, rs);
     lhu.set_decoder(op=0x25);
 
     lw.set_asm("lw %reg, \%lo(%exp)(%reg)", rt, imm, rs);
     lw.set_asm("lw %reg, (%reg)", rt, rs, imm=0);
-    lw.set_asm("lw %reg, %imm(%reg)", rt, imm, rs);
+    lw.set_asm("lw %reg, %imm (%reg)", rt, imm, rs);
     lw.set_decoder(op=0x23);
 
     lwl.set_asm("lwl %reg, \%lo(%exp)(%reg)", rt, imm, rs);
     lwl.set_asm("lwl %reg, (%reg)", rt, rs, imm=0);
-    lwl.set_asm("lwl %reg, %imm(%reg)", rt, imm, rs);
+    lwl.set_asm("lwl %reg, %imm (%reg)", rt, imm, rs);
     lwl.set_decoder(op=0x22);
 
     lwr.set_asm("lwr %reg, \%lo(%exp)(%reg)", rt, imm, rs);
     lwr.set_asm("lwr %reg, (%reg)", rt, rs, imm=0);
-    lwr.set_asm("lwr %reg, %imm(%reg)", rt, imm, rs);
+    lwr.set_asm("lwr %reg, %imm (%reg)", rt, imm, rs);
     lwr.set_decoder(op=0x26);
 
     sb.set_asm("sb %reg, \%lo(%exp)(%reg)", rt, imm, rs);
-    sb.set_asm("sb %reg, (%reg)", rs, rs, imm=0);
-    sb.set_asm("sb %reg, %imm(%reg)", rt, imm, rs);
+    sb.set_asm("sb %reg, (%reg)", rt, rs, imm=0);
+    sb.set_asm("sb %reg, %imm (%reg)", rt, imm, rs);
     sb.set_decoder(op=0x28);
 
     sh.set_asm("sh %reg, \%lo(%exp)(%reg)", rt, imm, rs);
-    sh.set_asm("sh %reg, (%reg)", rs, rs, imm=0);
-    sh.set_asm("sh %reg, %imm(%reg)", rt, imm, rs);
+    sh.set_asm("sh %reg, (%reg)", rt, rs, imm=0);
+    sh.set_asm("sh %reg, %imm (%reg)", rt, imm, rs);
     sh.set_decoder(op=0x29);
 
     sw.set_asm("sw %reg, \%lo(%exp)(%reg)", rt, imm, rs);
     sw.set_asm("sw %reg, (%reg)", rt, rs, imm=0);
-    sw.set_asm("sw %reg, %imm(%reg)", rt, imm, rs);
+    sw.set_asm("sw %reg, %imm (%reg)", rt, imm, rs);
     sw.set_decoder(op=0x2B);
 
     swl.set_asm("swl %reg, (%reg)", rt, rs, imm=0);
-    swl.set_asm("swl %reg, %imm(%reg)", rt, imm, rs);
+    swl.set_asm("swl %reg, %imm (%reg)", rt, imm, rs);
     swl.set_decoder(op=0x2A);
 
     swr.set_asm("swr %reg, (%reg)", rt, rs, imm=0);
-    swr.set_asm("swr %reg, %imm(%reg)", rt, imm, rs);
+    swr.set_asm("swr %reg, %imm (%reg)", rt, imm, rs);
     swr.set_decoder(op=0x2E);
 
     addi.set_asm("addi %reg, %reg, %exp", rt, rs, imm);
@@ -142,8 +142,8 @@ AC_ISA(mips1){
     xori.set_decoder(op=0x0E);
 
     lui.set_asm("lui %reg, %exp", rt, imm);
-    lui.set_asm("lui %reg, \%hi(%immHc)", rt, imm);  
-    lui.set_asm("lui %reg, \%hi(%expHc)", rt, imm);
+    lui.set_asm("lui %reg, \%hi(%imm(carry))", rt, imm);  
+    lui.set_asm("lui %reg, \%hi(%exp(carry))", rt, imm);
     lui.set_decoder(op=0x0F, rs=0x00);
 
     add.set_asm("add %reg, %reg, %reg", rd, rs, rt);
@@ -225,10 +225,10 @@ AC_ISA(mips1){
     mtlo.set_asm("mtlo %reg", rs);
     mtlo.set_decoder(op=0x00, func=0x13);
 
-    j.set_asm("j %expA", addr);
+    j.set_asm("j %exp(align)", addr);
     j.set_decoder(op=0x02);
 
-    jal.set_asm("jal %expA", addr);
+    jal.set_asm("jal %exp(align)", addr);
     jal.set_decoder(op=0x03);
 
     jr.set_asm("jr %reg", rs);
@@ -241,32 +241,32 @@ AC_ISA(mips1){
     jalr.set_asm("jal  %reg", rs, rd="$ra"); // gas
     jalr.set_decoder(op=0x00, func= 0x09);
   
-    beq.set_asm("beq %reg, %reg, %expR4A", rs, rt, imm);
-    beq.set_asm("b %expR4A", imm, rs=0, rt=0);        // gas
-    beq.set_asm("beqz %reg, %expR4A", rs, imm, rt=0); // gas
+    beq.set_asm("beq %reg, %reg, %exp(pcrel)", rs, rt, imm);
+    beq.set_asm("b %exp(pcrel)", imm, rs=0, rt=0);        // gas
+    beq.set_asm("beqz %reg, %exp(pcrel)", rs, imm, rt=0); // gas
     beq.set_decoder(op=0x04);
 
-    bne.set_asm("bgtu %reg, $0, %expR4A", rs, imm, rt=0x00); // bgtu with second operand fixed in 0
-    bne.set_asm("bne  %reg, %reg, %expR4A", rs, rt, imm);
-    bne.set_asm("bnez %reg, %expR4A", rs, imm, rt=0);
+    bne.set_asm("bgtu %reg, $0, %exp(pcrel)", rs, imm, rt=0x00); // bgtu with second operand fixed in 0
+    bne.set_asm("bne  %reg, %reg, %exp(pcrel)", rs, rt, imm);
+    bne.set_asm("bnez %reg, %exp(pcrel)", rs, imm, rt=0);
     bne.set_decoder(op=0x05);
   
-    blez.set_asm("blez %reg, %expR4A", rs, imm);
+    blez.set_asm("blez %reg, %exp(pcrel)", rs, imm);
     blez.set_decoder(op=0x06, rt=0x00);
   
-    bgtz.set_asm("bgtz %reg, %expR4A", rs, imm);
+    bgtz.set_asm("bgtz %reg, %exp(pcrel)", rs, imm);
     bgtz.set_decoder(op=0x07, rt=0x00); 
   
-    bltz.set_asm("bltz %reg, %expR4A", rs, imm);
+    bltz.set_asm("bltz %reg, %exp(pcrel)", rs, imm);
     bltz.set_decoder(op=0x01, rt=0x00);
   
-    bgez.set_asm("bgez %reg, %expR4A", rs, imm);
+    bgez.set_asm("bgez %reg, %exp(pcrel)", rs, imm);
     bgez.set_decoder(op=0x01, rt=0x01);
   
-    bltzal.set_asm("bltzal %reg, %expR4A", rs, imm);
+    bltzal.set_asm("bltzal %reg, %exp(pcrel)", rs, imm);
     bltzal.set_decoder(op=0x01, rt=0x10);
   
-    bgezal.set_asm("bgezal %reg, %expR4A", rs, imm);
+    bgezal.set_asm("bgezal %reg, %exp(pcrel)", rs, imm);
     bgezal.set_decoder(op=0x01, rt=0x11);
   
     sys_call.set_asm("syscall");
@@ -332,7 +332,7 @@ AC_ISA(mips1){
       "mflo  %0";
     }
     
-    pseudo_instr("lw %reg, %exp(%reg)") {
+    pseudo_instr("lw %reg, %exp (%reg)") {
  /* this should be 'li %0, %1', but 'li' is a conditional pseudo in gas :/ 
   - this only works when %exp < 2^16-1 - should be enough for validation */
       "lui  %0, %1";
@@ -340,7 +340,7 @@ AC_ISA(mips1){
       "lw   %0, (%0)";
     }
 
-    pseudo_instr("sw %reg, %exp(%reg)") {
+    pseudo_instr("sw %reg, %exp (%reg)") {
 /* this should be 'li %0, %1', but 'li' is a conditional pseudo in gas :/ 
  - this only works when %exp < 2^16-1 - should be enough for validation */
       "lui  $at, %1"; 

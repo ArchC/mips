@@ -34,9 +34,14 @@ For more information visit http://www.archc.org
 CHANGELOG:
 ==========
 
+Version 0.7.8-archc2.0:
+- Added binary utilities support files
+
+
 Version 0.7.7-archc2.0beta3:
 - Removed delayed assignements by creating the npc register
 - Created lo and hi registers and removed them from RB[32] and RB[33]
+
 
 Version 0.7.6-archc2.0beta3:
 

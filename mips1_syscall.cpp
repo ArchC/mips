@@ -115,9 +115,5 @@ void mips1_syscall::set_prog_args(int argc, char **argv)
   RB[5] = AC_RAM_END-512-120;
 }
 
-// Method for compatibility with new models
-int *mips1_syscall::get_syscall_table(){
-	static int syscall_table[] = { 0, 0, 0, 0};
-	return syscall_table;
-}
+
 

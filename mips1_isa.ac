@@ -114,6 +114,7 @@ AC_ISA(mips1){
 
     addi.set_asm("addi %reg, %reg, %exp", rt, rs, imm);
     addi.set_asm("add %reg, %reg, %exp", rt, rs, imm);
+    addi.set_asm("add %reg, 0, %exp", rt, imm, rs=0);
     addi.set_decoder(op=0x08);
   
     addiu.set_asm("addiu %reg, %reg, %exp", rt, rs, imm);

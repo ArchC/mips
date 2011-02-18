@@ -28,7 +28,7 @@ define abi as (
   define calling convention for int as ($4 $5 $6 $7);
   define calling convention for int as stack size 4 alignment 4;
   define return convention for int as ($2 $3);
-  /define programcounter register as PC;
+  define programcounter register as PC;
   define stackpointer register as $29;
   define framepointer register as $30;
   define return register as $31;
@@ -138,6 +138,10 @@ define instruction mult semantic as (
   (transfer Lo:SPECIAL (* Op1:GPR Op2:GPR));
   (transfer Hi:SPECIAL (mulhs Op1:GPR Op2:GPR));
 ) cost 1;
+define instruction multu semantic as (
+  //(transfer Lo:SPECIAL (* Op1:GPR Op2:GPR));
+  (transfer Hi:SPECIAL (mulhu Op1:GPR Op2:GPR));
+) cost 1;
 define instruction mfhi semantic as (
   (transfer Op1:GPR Hi:SPECIAL);
 ) cost 1;
@@ -190,6 +194,24 @@ define instruction jalr semantic as (
 ) cost 1;
 define instruction beq semantic as (
   (cjump const:cond:eq (comp Op1:GPR Op2:GPR) imm:Op3:int);
+) cost 1;
+define instruction bne semantic as () cost 1;
+define instruction bne semantic as (
+  (cjump const:cond:ne (comp Op1:GPR Op2:GPR) imm:Op3:int);
+) cost 1;
+
+// * CONDITIONAL BRANCHING *
+define instruction blez semantic as (
+  let Op1 = "$14" in
+    (jumpnz $14:GPR imm:Op2:int);
+) cost 1;
+define instruction slt semantic as (
+  let Op1 = "$14" in
+    (transfer $14:GPR (setif const:cond:lt Op2:GPR Op3:GPR));
+) cost 1;
+define instruction sltu semantic as (
+  let Op1 = "$14" in
+    (transfer $14:GPR (setif const:cond:ult Op2:GPR Op3:GPR));
 ) cost 1;
 //define instruction slt semantic as (
 //  (transfer $1:GPR (comp Op2:GPR Op3:GPR));

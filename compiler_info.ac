@@ -141,13 +141,13 @@ define instruction mult semantic as (
 define instruction multu semantic as (
   //(transfer Lo:SPECIAL (* Op1:GPR Op2:GPR));
   (transfer Hi:SPECIAL (mulhu Op1:GPR Op2:GPR));
-) cost 1;
+) cost 10;
 define instruction mfhi semantic as (
   (transfer Op1:GPR Hi:SPECIAL);
-) cost 1;
+) cost 10;
 define instruction mflo semantic as (
   (transfer Op1:GPR Lo:SPECIAL);
-) cost 1;
+) cost 10;
 define instruction mthi semantic as (
 //  (transfer Hi:SPECIAL Op1:GPR);
 ) cost 1;
@@ -175,6 +175,10 @@ define instruction srav semantic as (
 ) cost 1;
 
 // * BRANCHING *
+define instruction j semantic as (
+  (jump imm:Op1:int);
+) cost 1;
+
 define instruction jal semantic as (
   (call imm:Op1:int);
 ) cost 1;

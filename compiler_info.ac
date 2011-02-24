@@ -22,7 +22,7 @@ redefine operand tgtimm size to 16;
 
 define abi as (
   define callee save registers as ($16 $17 $18 $19 $20 $21 $22 $23);
-  define reserved registers as    ($26 $27 $28 $29 $30 $31);
+  define reserved registers as    ($0 $14 $15 $26 $27 $28 $29 $30 $31);
   define auxiliar registers as    ($14 $15);
   //define calling convention for int as stack size 4 alignment 4;
   define calling convention for int as ($4 $5 $6 $7);
@@ -46,31 +46,31 @@ define abi as (
 define instruction lb semantic as () cost 1;
 define instruction lb semantic as (
   (transfer Op1:GPR (sext (memref Op2:GPR) const:num:8));
-) cost 1;
+) cost 1, has_delay_slot;
 
 //LBU
 define instruction lbu semantic as () cost 1;
 define instruction lbu semantic as (
   (transfer Op1:GPR (zext (memref Op2:GPR) const:num:8));
-) cost 1;
+) cost 1, has_delay_slot;
 
 //LH
 define instruction lh semantic as () cost 1;
 define instruction lh semantic as (
   (transfer Op1:GPR (sext (memref Op2:GPR) const:num:16));
-) cost 1;
+) cost 1, has_delay_slot;
 
 //LHU
 define instruction lhu semantic as () cost 1;
 define instruction lhu semantic as (
   (transfer Op1:GPR (zext (memref Op2:GPR) const:num:16));
-) cost 1;
+) cost 1, has_delay_slot;
 
 //LW
 define instruction lw semantic as () cost 1;
 define instruction lw semantic as (
   (transfer Op1:GPR (memref Op2:GPR));
-) cost 1;
+) cost 1, has_delay_slot;
 
 // * STORE INSTRUCTIONS *
 //SB
@@ -177,38 +177,38 @@ define instruction srav semantic as (
 // * BRANCHING *
 define instruction j semantic as (
   (jump imm:Op1:int);
-) cost 1;
+) cost 1, has_delay_slot;
 
 define instruction jal semantic as (
   (call imm:Op1:int);
-) cost 1;
+) cost 1, has_delay_slot;
 
 define instruction jr semantic as (
   (jump Op1:GPR);
   //(transfer PC:SPECIAL Op1:GPR);
-) cost 1;
+) cost 1, has_delay_slot;
 define instruction jr semantic as () cost 1;
 define instruction jr semantic as (
   (ret);
-) cost 1;
+) cost 1, has_delay_slot;
 
 define instruction jalr semantic as () cost 1;
 define instruction jalr semantic as (
   (call Op1:GPR);
-) cost 1;
+) cost 1, has_delay_slot;
 define instruction beq semantic as (
   (cjump const:cond:eq (comp Op1:GPR Op2:GPR) imm:Op3:int);
-) cost 1;
+) cost 1, has_delay_slot;
 define instruction bne semantic as () cost 1;
 define instruction bne semantic as (
   (cjump const:cond:ne (comp Op1:GPR Op2:GPR) imm:Op3:int);
-) cost 1;
+) cost 1, has_delay_slot;
 
 // * CONDITIONAL BRANCHING *
-define instruction blez semantic as (
+define instruction bgtz semantic as (
   let Op1 = "$14" in
     (jumpnz $14:GPR imm:Op2:int);
-) cost 1;
+) cost 1, has_delay_slot;
 define instruction slt semantic as (
   let Op1 = "$14" in
     (transfer $14:GPR (setif const:cond:lt Op2:GPR Op3:GPR));
@@ -220,3 +220,9 @@ define instruction sltu semantic as (
 //define instruction slt semantic as (
 //  (transfer $1:GPR (comp Op2:GPR Op3:GPR));
 //) cost 1;
+
+// * NOP *
+define instruction nop semantic as (
+  (nop);
+) cost 1;
+

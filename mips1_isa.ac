@@ -230,6 +230,7 @@ AC_ISA(mips1){
     j.set_decoder(op=0x02);
 
     jal.set_asm("jal %exp(align)", addr);
+    jal.set_asm("jal %exp(align)", addr); //compiler_info related
     jal.set_decoder(op=0x03);
 
     jr.set_asm("jr %reg", rs);

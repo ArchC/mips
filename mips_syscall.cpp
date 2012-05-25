@@ -1,5 +1,5 @@
 /**
- * @file      mips1_syscall.cpp
+ * @file      mips_syscall.cpp
  * @author    Sandro Rigo
  *            Marcus Bartholomeu
  *
@@ -33,13 +33,13 @@
  *
  */
 
-#include "mips1_syscall.H"
+#include "mips_syscall.H"
 
 // 'using namespace' statement to allow access to all
-// mips1-specific datatypes
-using namespace mips1_parms;
+// mips-specific datatypes
+using namespace mips_parms;
 
-void mips1_syscall::get_buffer(int argn, unsigned char* buf, unsigned int size)
+void mips_syscall::get_buffer(int argn, unsigned char* buf, unsigned int size)
 {
   unsigned int addr = RB[4+argn];
 
@@ -48,7 +48,7 @@ void mips1_syscall::get_buffer(int argn, unsigned char* buf, unsigned int size)
   }
 }
 
-void mips1_syscall::set_buffer(int argn, unsigned char* buf, unsigned int size)
+void mips_syscall::set_buffer(int argn, unsigned char* buf, unsigned int size)
 {
   unsigned int addr = RB[4+argn];
 
@@ -57,7 +57,7 @@ void mips1_syscall::set_buffer(int argn, unsigned char* buf, unsigned int size)
   }
 }
 
-void mips1_syscall::set_buffer_noinvert(int argn, unsigned char* buf, unsigned int size)
+void mips_syscall::set_buffer_noinvert(int argn, unsigned char* buf, unsigned int size)
 {
   unsigned int addr = RB[4+argn];
 
@@ -66,23 +66,23 @@ void mips1_syscall::set_buffer_noinvert(int argn, unsigned char* buf, unsigned i
   }
 }
 
-int mips1_syscall::get_int(int argn)
+int mips_syscall::get_int(int argn)
 {
   return RB[4+argn];
 }
 
-void mips1_syscall::set_int(int argn, int val)
+void mips_syscall::set_int(int argn, int val)
 {
   RB[2+argn] = val;
 }
 
-void mips1_syscall::return_from_syscall()
+void mips_syscall::return_from_syscall()
 {
   ac_pc = RB[31];
   npc = ac_pc + 4;
 }
 
-void mips1_syscall::set_prog_args(int argc, char **argv)
+void mips_syscall::set_prog_args(int argc, char **argv)
 {
   int i, j, base;
 
@@ -97,16 +97,14 @@ void mips1_syscall::set_prog_args(int argc, char **argv)
     j += len;
   }
 
-  //Ajust %sp and write argument string
-  RB[29] = AC_RAM_END-512;
-  set_buffer(25, (unsigned char*) ac_argstr, 512);   //$25 = $29(sp) - 4 (set_buffer adds 4)
+  RB[4] = AC_RAM_END-512;
+  set_buffer(0, (unsigned char*) ac_argstr, 512);   //$25 = $29(sp) - 4 (set_buffer adds 4)
 
-  //Ajust %sp and write string pointers
-  RB[29] = AC_RAM_END-512-120;
-  set_buffer_noinvert(25, (unsigned char*) ac_argv, 120);
 
-  //Set %sp
-  RB[29] = AC_RAM_END-512-128;
+  RB[4] = AC_RAM_END-512-120;
+  set_buffer_noinvert(0, (unsigned char*) ac_argv, 120);
+
+  //RB[4] = AC_RAM_END-512-128;
 
   //Set %o0 to the argument count
   RB[4] = argc;

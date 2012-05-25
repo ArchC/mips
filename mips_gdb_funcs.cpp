@@ -1,5 +1,5 @@
 /**
- * @file      mips1_gdb_funcs.cpp
+ * @file      mips_gdb_funcs.cpp
  * @author    Sandro Rigo
  *            Marcus Bartholomeu
  *            Alexandro Baldassin (acasm information)
@@ -20,18 +20,18 @@
  *
  */
 
-#include "mips1.H"
+#include "mips.H"
 
 // 'using namespace' statement to allow access to all
-// mips1-specific datatypes
-using namespace mips1_parms;
+// mips-specific datatypes
+using namespace mips_parms;
 
-int mips1::nRegs(void) {
+int mips::nRegs(void) {
    return 73;
 }
 
 
-ac_word mips1::reg_read( int reg ) {
+ac_word mips::reg_read( int reg ) {
   /* general purpose registers */
   if ( ( reg >= 0 ) && ( reg < 32 ) )
     return RB.read( reg );
@@ -50,7 +50,7 @@ ac_word mips1::reg_read( int reg ) {
 }
 
 
-void mips1::reg_write( int reg, ac_word value ) {
+void mips::reg_write( int reg, ac_word value ) {
   /* general purpose registers */
   if ( ( reg >= 0 ) && ( reg < 32 ) )
     RB.write( reg, value );
@@ -67,11 +67,11 @@ void mips1::reg_write( int reg, ac_word value ) {
 }
 
 
-unsigned char mips1::mem_read( unsigned int address ) {
+unsigned char mips::mem_read( unsigned int address ) {
   return IM->read_byte( address );
 }
 
 
-void mips1::mem_write( unsigned int address, unsigned char byte ) {
+void mips::mem_write( unsigned int address, unsigned char byte ) {
   IM->write_byte( address, byte );
 }

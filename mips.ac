@@ -1,5 +1,5 @@
 /**
- * @file      mips1.ac
+ * @file      mips.ac
  * @author    Sandro Rigo
  *            Marcus Bartholomeu
  *            Alexandro Baldassin (acasm information)
@@ -20,9 +20,9 @@
  *
  */
 
-AC_ARCH(mips1){
+AC_ARCH(mips){
 
-  ac_mem   DM:5M;
+  ac_mem   DM:16M;
   ac_regbank RB:32;
   ac_reg npc;
   ac_reg hi, lo;
@@ -31,7 +31,7 @@ AC_ARCH(mips1){
 
   ARCH_CTOR(mips1) {
 
-    ac_isa("mips1_isa.ac");
+    ac_isa("mips_isa.ac");
     set_endian("big");
 
   };

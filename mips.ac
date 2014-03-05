@@ -29,7 +29,7 @@ AC_ARCH(mips){
 
   ac_wordsize 32;
 
-  ARCH_CTOR(mips1) {
+  ARCH_CTOR(mips) {
 
     ac_isa("mips_isa.ac");
     set_endian("big");

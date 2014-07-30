@@ -532,7 +532,7 @@ void ac_behavior( mthi )
 {
   dbg_printf("mthi r%d\n", rs);
   hi = RB[rs];
-  dbg_printf("Result = %#x\n", hi);
+  dbg_printf("Result = %#x\n", (unsigned int) hi);
 };
 
 //!Instruction mflo behavior method.
@@ -548,7 +548,7 @@ void ac_behavior( mtlo )
 {
   dbg_printf("mtlo r%d\n", rs);
   lo = RB[rs];
-  dbg_printf("Result = %#x\n", lo);
+  dbg_printf("Result = %#x\n", (unsigned int) lo);
 };
 
 //!Instruction j behavior method.

@@ -16,6 +16,7 @@
 //#define POWER_TABLE_FILE "../../processors/mips/acpower_table_mips_xc6slx75_100Mhz.csv"
 
 //#define POWER_TABLE_FILE "../../processors/mips/acpower_table_mips_cycloneV_100Mhz.csv"
+//#define POWER_TABLE_FILE "powersc/acpower_table_mips_cycloneV_100Mhz.csv"
 #define POWER_TABLE_FILE "powersc/acpower_table_mips_cycloneV_100Mhz.csv"
 
 #define WINDOW_REPORT
@@ -234,20 +235,28 @@ class power_stats {
 			char instr_name[MAX_INSTR_NAME_SIZE];
 			char aux[MAX_LINESIZE_CSV_FILE];
 			double value;
-      char* res;
+            char* res;
 
 			unsigned int index = 0;
 			unsigned int pos_line = 0;
 			unsigned int valid_line = 0;
-      unsigned int profile_id = 0;
+            unsigned int profile_id = 0;
 			fpos_t pos;
 
 			char* pch = NULL;
 
-			f = fopen(filename, "r");
+             // Get self PATH
+            char buff[1024];
+            ssize_t len = ::readlink("/proc/self/exe", buff, sizeof(buff)-1);
+            if (len != -1) 
+                  buff[len] = '\0';
+            string strbuff(buff);
+            strbuff = strbuff.substr(0, strbuff.find_last_of("\\/"));
+            strbuff = strbuff + "/" + filename;
+
+            f = fopen(strbuff.c_str(), "r");
 			if (f == NULL) {
-				printf("\ntentando abrir arquivoooooo csv");
-				sprintf(aux, "Power file %s not found", filename);
+				sprintf(aux, "Power file %s not found", strbuff.c_str());
 				perror(aux);
 				exit(1);
 			}

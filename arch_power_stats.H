@@ -1,4 +1,3 @@
-// Guedes local version
 #ifdef POWER_SIM
 #include <powersc.h>
 
@@ -10,14 +9,14 @@
 #define START_PROFILE 0
 #define NUM_INSTR 59
 
-//#define POWER_TABLE_FILE "../../processors/mips/acpower_table.csv"
-//#define POWER_TABLE_FILE "../../processors/mips/acpower_table_mips_cycloneV_25Mhz.csv"
-//#define POWER_TABLE_FILE "../../processors/mips/acpower_table_mips_xc3s1200e_100Mhz.csv"
-//#define POWER_TABLE_FILE "../../processors/mips/acpower_table_mips_xc6slx75_100Mhz.csv"
+// Tables in 'powersc' dirt
 
-//#define POWER_TABLE_FILE "../../processors/mips/acpower_table_mips_cycloneV_100Mhz.csv"
-//#define POWER_TABLE_FILE "powersc/acpower_table_mips_cycloneV_100Mhz.csv"
-#define POWER_TABLE_FILE "powersc/acpower_table_mips_cycloneV_100Mhz.csv"
+//#define POWER_TABLE_FILE "acpower_table.csv"
+//#define POWER_TABLE_FILE "acpower_table_mips_cycloneV_25Mhz.csv"
+//#define POWER_TABLE_FILE "acpower_table_mips_xc3s1200e_100Mhz.csv"
+//#define POWER_TABLE_FILE "acpower_table_mips_xc6slx75_100Mhz.csv"
+//#define POWER_TABLE_FILE "acpower_table_mips_cycloneV_100Mhz.csv"
+#define POWER_TABLE_FILE "acpower_table_mips_cycloneV_100Mhz.csv"
 
 #define WINDOW_REPORT
 #define WINDOW_REPORT_FILE "window_power_report"
@@ -247,16 +246,13 @@ class power_stats {
 
              // Get self PATH
             char buff[1024];
-            ssize_t len = ::readlink("/proc/self/exe", buff, sizeof(buff)-1);
-            if (len != -1) 
-                  buff[len] = '\0';
-            string strbuff(buff);
-            strbuff = strbuff.substr(0, strbuff.find_last_of("\\/"));
-            strbuff = strbuff + "/" + filename;
+            strcat (buff, POWER_SIM);
+            strcat (buff, "/");
+            strcat (buff, filename);
 
-            f = fopen(strbuff.c_str(), "r");
+            f = fopen(buff, "r");
 			if (f == NULL) {
-				sprintf(aux, "Power file %s not found", strbuff.c_str());
+				sprintf(aux, "Power file %s not found", buff);
 				perror(aux);
 				exit(1);
 			}

@@ -14,7 +14,9 @@
 //#define POWER_TABLE_FILE "../../processors/mips/acpower_table_mips_cycloneV_25Mhz.csv"
 //#define POWER_TABLE_FILE "../../processors/mips/acpower_table_mips_xc3s1200e_100Mhz.csv"
 //#define POWER_TABLE_FILE "../../processors/mips/acpower_table_mips_xc6slx75_100Mhz.csv"
-#define POWER_TABLE_FILE "../../processors/mips/acpower_table_mips_cycloneV_100Mhz.csv"
+
+//#define POWER_TABLE_FILE "../../processors/mips/acpower_table_mips_cycloneV_100Mhz.csv"
+#define POWER_TABLE_FILE "powersc/acpower_table_mips_cycloneV_100Mhz.csv"
 
 #define WINDOW_REPORT
 #define WINDOW_REPORT_FILE "window_power_report"

@@ -1,7 +1,7 @@
 # Number of profiles
 1
 # ProfileID, Characterization Frequency,Frequency Scale,EPI Scale,Characterization Name,Characterization Description
-0,100,1E6,1E-9,"mips-plasma-cycloneV","Plasma Characterization cycloneV at 100MHz"
+0,100,1e6,1e+AC0-9,Tiwari in Cyclone V,Tiwari Method for Altera Cyclone V
 # Stall consumption
 0
 1,lb,2.19
@@ -52,7 +52,7 @@
 46,j,2.41
 47,jal,1.34
 48,jr,1.58
-49,jal,r1.95
+49,jalr,1.95
 50,beq,2.03
 51,bne,2.03
 52,blez,2.03

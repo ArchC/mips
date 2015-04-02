@@ -97,9 +97,6 @@ void ac_behavior( lb )
   bptr = (char *) &data;
   RB[rt] = (ac_Sword) bptr[3 - offset];
   
-//  byte = DM.read_byte(RB[rs]+ imm);
-//  RB[rt] = (ac_Sword)byte ;
-  
   dbg_printf("Result = %#x\n", RB[rt]);
 };
 
@@ -118,15 +115,12 @@ void ac_behavior( lbu )
   bptr = (unsigned char *) &data;
   RB[rt] = bptr[3 - offset];
   
-//  byte = DM.read_byte(RB[rs]+ imm);
-//  RB[rt] = byte ;
   dbg_printf("Result = %#x\n", RB[rt]);
 };
 
 //!Instruction lh behavior method.
 void ac_behavior( lh )
 {
-//  short int half;
   unsigned address, offset;
   
   dbg_printf("lh r%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
@@ -140,10 +134,6 @@ void ac_behavior( lh )
   }
   else
     RB[rt] = DM.read(address & ~3) >> 16;
-
-//  half = DM.read_half(address);
-//  RB[rt] = (ac_Sword) half;
-//  printf("%d) ", RB[rt]);
 
   dbg_printf("Result = %#x\n", RB[rt]);
 };
@@ -161,9 +151,6 @@ void ac_behavior( lhu )
     RB[rt] = DM.read(address & ~3) & 0xFFFF;
   else
     RB[rt] = DM.read(address & ~3) >> 16;
-
-//  half = DM.read_half(address);
-//  RB[rt] = half;
 
   dbg_printf("Result = %#x\n", RB[rt]);
 };
@@ -222,10 +209,7 @@ void ac_behavior( sb )
   data = DM.read(address & ~3);
   bptr[3 - offset] = RB[rt];
   DM.write(address & ~3, data);
-  
-//  byte = RB[rt] & 0xFF;
-//  DM.write_byte(address, byte);
-  
+   
   dbg_printf("Result = %#x\n", (int) byte);
 };
 
@@ -233,7 +217,6 @@ void ac_behavior( sb )
 void ac_behavior( sh )
 {
   ac_word data;
-//  unsigned short int half;
   unsigned address, offset;
   
   dbg_printf("sh r%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
@@ -246,9 +229,6 @@ void ac_behavior( sh )
   else
     DM.write(address & ~3, ((RB[rt] & 0xFFFF) << 16) | (data & 0xFFFF));
     
-//  half = RB[rt] & 0xFFFF;
-//  DM.write_half(address, half);
-  
   dbg_printf("Result = %#x\n", (int) half);
 };
 

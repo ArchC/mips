@@ -97,6 +97,13 @@ void ac_behavior( lb )
   bptr = (char *) &data;
   RB[rt] = (ac_Sword) bptr[3 - offset];
   
+  byte = DM.read_byte(address);
+  
+  if ((ac_Sword) byte != RB[rt])
+    printf("%x lb: %d %d\n", (unsigned) ac_pc, (ac_Sword) byte, RB[rt]);
+    
+//  RB[rt] = (ac_Sword) byte;
+  
   dbg_printf("Result = %#x\n", RB[rt]);
 };
 
@@ -115,6 +122,15 @@ void ac_behavior( lbu )
   bptr = (unsigned char *) &data;
   RB[rt] = bptr[3 - offset];
   
+  byte = DM.read_byte(address);
+  if (byte != RB[rt]) {
+    printf("%x lbu: %d %d\n", (unsigned) ac_pc, byte, RB[rt]);
+    printf("\t%d %d %d %d %d\n", bptr[0], bptr[1], bptr[2], bptr[3], offset);
+  }
+    
+  
+//  RB[rt] = byte;
+
   dbg_printf("Result = %#x\n", RB[rt]);
 };
 
@@ -122,6 +138,7 @@ void ac_behavior( lbu )
 void ac_behavior( lh )
 {
   unsigned address, offset;
+  short int half;
   
   dbg_printf("lh r%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
 
@@ -133,7 +150,17 @@ void ac_behavior( lh )
       RB[rt] |= 0xFFFF0000;
   }
   else
-    RB[rt] = DM.read(address & ~3) >> 16;
+    RB[rt] = (int) DM.read(address & ~3) >> 16;
+
+  half = DM.read_half(address);
+
+  if ((ac_Sword) half != RB[rt]) {
+    printf("%x lh: %d %d\n", (unsigned) ac_pc, (ac_Sword) half, RB[rt]);
+    printf("\t%d %d %d\n", DM.read(address & ~3) & 0xFFFF, DM.read(address & ~3) & 0xFFFF0000, offset);
+  }
+
+//  RB[rt] = (ac_Sword) half;
+
 
   dbg_printf("Result = %#x\n", RB[rt]);
 };
@@ -142,6 +169,7 @@ void ac_behavior( lh )
 void ac_behavior( lhu )
 {
   unsigned address, offset;
+  short int half;
   
   dbg_printf("lhu r%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
   
@@ -151,6 +179,13 @@ void ac_behavior( lhu )
     RB[rt] = DM.read(address & ~3) & 0xFFFF;
   else
     RB[rt] = DM.read(address & ~3) >> 16;
+
+  half = DM.read_half(address);
+  
+  if (half != RB[rt])
+    printf("%x lhu: %d %d\n", (unsigned) ac_pc, half, RB[rt]);
+
+//  RB[rt] = half;
 
   dbg_printf("Result = %#x\n", RB[rt]);
 };
@@ -207,8 +242,15 @@ void ac_behavior( sb )
   address = RB[rs] + imm;
   offset = address & 3;
   data = DM.read(address & ~3);
-  bptr[3 - offset] = RB[rt];
+  bptr[3 - offset] = RB[rt] & 0xFF;
   DM.write(address & ~3, data);
+   
+//  byte = RB[rt] & 0xFF;
+//  DM.write_byte(address, byte);
+
+  if (DM.read_byte(address) != (RB[rt] & 0xFF)) {
+    printf("%x sb: %d %d\n", (unsigned) ac_pc, DM.read_byte(address), RB[rt] & 0xFF);
+  }
    
   dbg_printf("Result = %#x\n", (int) byte);
 };
@@ -218,6 +260,7 @@ void ac_behavior( sh )
 {
   ac_word data;
   unsigned address, offset;
+  short int half;
   
   dbg_printf("sh r%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
   
@@ -229,6 +272,13 @@ void ac_behavior( sh )
   else
     DM.write(address & ~3, ((RB[rt] & 0xFFFF) << 16) | (data & 0xFFFF));
     
+//  half = RB[rt] & 0xFFFF;
+//  DM.write_half(address, half);
+
+   if (DM.read_half(address) != (RB[rt] & 0xFFFF)) {
+    printf("%x sb: %d %d\n", (unsigned) ac_pc, DM.read_half(address), RB[rt] & 0xFFFF);
+  }
+   
   dbg_printf("Result = %#x\n", (int) half);
 };
 

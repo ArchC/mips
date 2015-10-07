@@ -3,6 +3,8 @@ Makefile.archc
 main.cpp
 main.cpp.tmpl
 *.o
+*.x
+*.a
 mips.H
 mips.cpp
 mips.x

@@ -1,7 +1,7 @@
 # Number of profiles,,
 1,,
 # ProfileID, Characterization Frequency,Frequency Scale,EPI Scale,Characterization Name,Characterization Description
-0,100,1E6,1E-9,"mips plasma xc5vlx50t", "Plasma Characterization xc5vlx50t at 100MHz"
+100,1E6,1E-9,"mips plasma xc5vlx50t", "Plasma Characterization xc5vlx50t at 100MHz"
 # Stall consumption
 0
 1,lb,4.73

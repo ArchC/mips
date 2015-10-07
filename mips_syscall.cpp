@@ -45,7 +45,7 @@ void mips_syscall::get_buffer(int argn, unsigned char* buf, unsigned int size)
   unsigned int addr = RB[4+argn];
 
   for (unsigned int i = 0; i<size; i++, addr++) {
-    buf[i] = DM.read_byte(addr);
+    buf[i] = DATA_PORT->read_byte(addr);
   }
 }
 
@@ -54,7 +54,9 @@ void mips_syscall::set_buffer(int argn, unsigned char* buf, unsigned int size)
   unsigned int addr = RB[4+argn];
 
   for (unsigned int i = 0; i<size; i++, addr++) {
-    DM.write_byte(addr, buf[i]);
+    DATA_PORT->write_byte(addr, buf[i]);
+    //printf("\nDATA_PORT[%d]=%d", addr, buf[i]);
+
   }
 }
 
@@ -63,7 +65,8 @@ void mips_syscall::set_buffer_noinvert(int argn, unsigned char* buf, unsigned in
   unsigned int addr = RB[4+argn];
 
   for (unsigned int i = 0; i<size; i+=4, addr+=4) {
-    DM.write(addr, *(unsigned int *) &buf[i]);
+    DATA_PORT->write(addr, *(unsigned int *) &buf[i]);
+    //printf("\nDATA_PORT_no[%d]=%d", addr, buf[i]);
   }
 }
 
@@ -85,6 +88,8 @@ void mips_syscall::return_from_syscall()
 
 void mips_syscall::set_prog_args(int argc, char **argv)
 {
+
+
   int i, j, base;
 
   unsigned int ac_argv[30];
@@ -100,7 +105,7 @@ void mips_syscall::set_prog_args(int argc, char **argv)
 
   RB[4] = base;
   set_buffer(0, (unsigned char*) ac_argstr, 512);   //$25 = $29(sp) - 4 (set_buffer adds 4)
-
+  
 
   RB[4] = base - 120;
   set_buffer_noinvert(0, (unsigned char*) ac_argv, 120);

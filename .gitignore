@@ -1,3 +1,4 @@
+Makefile
 Makefile.archc
 main.cpp
 main.cpp.tmpl
@@ -15,3 +16,5 @@ mips_isa.cpp.tmpl
 mips_isa_init.cpp
 mips_parms.H
 mips_syscall.H.tmpl
+mips_ih_bhv_macros.H
+mips_intr_handlers.H

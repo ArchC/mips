@@ -459,13 +459,13 @@ class power_stats {
 
              // Get self PATH
             char buff[1024];
-            strcat (buff, POWER_SIM);
+            strcpy (buff, POWER_SIM);
             strcat (buff, "/");
             strcat (buff, filename);
 
 			f = fopen(buff, "r");
 			if (f == NULL) {
-				sprintf(aux, "Power file %s not found", filename);
+				sprintf(aux, "Power file %s not found", buff);
 				perror(aux);
 				exit(1);
 			}

@@ -26,7 +26,7 @@
 
 
 //If you want debug information for this model, uncomment next line
-//#define DEBUG_MODEL
+#define DEBUG_MODEL
 #include "ac_debug_model.H"
 
 
@@ -56,6 +56,7 @@ void ac_behavior( instruction )
 void ac_behavior( Type_R ){}
 void ac_behavior( Type_I ){}
 void ac_behavior( Type_J ){}
+void ac_behavior( Type_S ){}
  
 //!Behavior called before starting simulation
 void ac_behavior(begin)
@@ -711,8 +712,12 @@ void ac_behavior( bgezal )
 //!Instruction sys_call behavior method.
 void ac_behavior( sys_call )
 {
-  dbg_printf("syscall\n");
-  stop();
+  dbg_printf("Syscall number: 0x%X\t(%d)\n", code, code);
+  if (syscall.process_syscall(code) == -1) {
+    fprintf(stderr, "Warning: Unimplemented syscall.\n");
+    fprintf(stderr, "\tCaller address: 0x%X\n\tSyscall number: 0x%X\t%d\n",
+            (unsigned int)ac_pc, code, code);
+  }
 }
 
 //!Instruction instr_break behavior method.

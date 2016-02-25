@@ -25,6 +25,7 @@ AC_ISA(mips){
   ac_format Type_R  = "%op:6 %rs:5 %rt:5 %rd:5 %shamt:5 %func:6";
   ac_format Type_I  = "%op:6 %rs:5 %rt:5 %imm:16:s";
   ac_format Type_J  = "%op:6 %addr:26";
+  ac_format Type_S  = "%op:6 %code:20 %func:6";
 
   ac_instr<Type_I> lb, lbu, lh, lhu, lw, lwl, lwr;
   ac_instr<Type_I> sb, sh, sw, swl, swr;
@@ -37,7 +38,8 @@ AC_ISA(mips){
   ac_instr<Type_J> j, jal;
   ac_instr<Type_R> jr, jalr;
   ac_instr<Type_I> beq, bne, blez, bgtz, bltz, bgez, bltzal, bgezal;
-  ac_instr<Type_R> sys_call, instr_break;
+  ac_instr<Type_R> instr_break;
+  ac_instr<Type_S> sys_call;
 
 
 // gas MIPS specific register names
@@ -294,7 +296,7 @@ AC_ISA(mips){
     bgezal.set_asm("bgezal %reg, %exp(pcrel)", rs, imm);
     bgezal.set_decoder(op=0x01, rt=0x11);
   
-    sys_call.set_asm("syscall");
+    sys_call.set_asm("syscall %imm", code);
     sys_call.set_decoder(op=0x00, func=0x0C);
   
     instr_break.set_asm("break", rt=0);

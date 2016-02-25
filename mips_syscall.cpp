@@ -88,8 +88,6 @@ void mips_syscall::return_from_syscall()
 
 void mips_syscall::set_prog_args(int argc, char **argv)
 {
-
-
   int i, j, base;
 
   unsigned int ac_argv[30];
@@ -105,7 +103,6 @@ void mips_syscall::set_prog_args(int argc, char **argv)
 
   RB[4] = base;
   set_buffer(0, (unsigned char*) ac_argstr, 512);   //$25 = $29(sp) - 4 (set_buffer adds 4)
-  
 
   RB[4] = base - 120;
   set_buffer_noinvert(0, (unsigned char*) ac_argv, 120);

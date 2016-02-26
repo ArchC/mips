@@ -3,6 +3,20 @@ MIPS ArchC functional model
 
 This is the MIPS ArchC functional model.
 
+Current status
+--------------
+This model was a MIPS-I implementation and is now being updated to mips32r2 with
+hardware floating-point support.
+
+Currently it supports only a few non-MIPS-I instructions, but enough to compile
+a simple hello-world program and run it.
+
+The easiest way you can compile a program to mips32r2 is using the ecc compiler
+(http://ellcc.org/blog/?page_id=313) based on Clang/LLVM. Example:
+
+    ecc -target mips-linux-eng hello.c -o hello
+    mips.x --load=hello
+
 License
 -------
  - ArchC models are provided under the ArchC license.

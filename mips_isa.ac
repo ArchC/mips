@@ -21,12 +21,16 @@
  */
 
 AC_ISA(mips){
+  ac_helper {
+    #include "mips_isa_helper.H"
+  };
 
   ac_format Type_R  = "%op:6 %rs:5 %rt:5 %rd:5 %shamt:5 %func:6";
   ac_format Type_I  = "%op:6 %rs:5 %rt:5 %imm:16:s";
   ac_format Type_J  = "%op:6 %addr:26";
   ac_format Type_S  = "%op:6 %code:20 %func:6";
 
+  // mips-I
   ac_instr<Type_I> lb, lbu, lh, lhu, lw, lwl, lwr;
   ac_instr<Type_I> sb, sh, sw, swl, swr;
   ac_instr<Type_I> addi, addiu, slti, sltiu, andi, ori, xori, lui;
@@ -41,7 +45,16 @@ AC_ISA(mips){
   ac_instr<Type_R> instr_break;
   ac_instr<Type_S> sys_call;
 
-// gas MIPS specific register names
+  // mips-IV
+  ac_instr<Type_R> movz, movn;
+
+  // mips32r2
+  ac_instr<Type_R> seb, seh;
+
+  // FPU instructions - mips-I
+  ac_instr<Type_I> sdc1, ldc1;
+
+  // gas MIPS specific register names
   ac_asm_map reg {
      "$"[0..31] = [0..31];
      "$zero" = 0;
@@ -51,6 +64,11 @@ AC_ISA(mips){
      "$sp" = 29;
      "$fp" = 30;
      "$ra" = 31;
+  }
+
+  // Floating-point register names
+  ac_asm_map freg {
+     "$f"[0..31] = [0..31];
   }
 
   ISA_CTOR(mips){
@@ -301,6 +319,23 @@ AC_ISA(mips){
     instr_break.set_asm("break %imm", rt);
     instr_break.set_decoder(op=0x00, func=0x0D);
 
+    movz.set_asm("movz %reg, %reg, %reg", rd, rs, rt);
+    movz.set_decoder(op=0x00, shamt=0x00, func=0x0A);
+
+    movn.set_asm("movn %reg, %reg, %reg", rd, rs, rt);
+    movn.set_decoder(op=0x00, shamt=0x00, func=0x0B);
+
+    seb.set_asm("seb %reg, %reg", rd, rt);
+    seb.set_decoder(op=0x1F, shamt=0x10, func=0x20);
+
+    seh.set_asm("seh %reg, %reg", rd, rt);
+    seh.set_decoder(op=0x1F, shamt=0x18, func=0x20);
+
+    sdc1.set_asm("sdc1 %freg, %imm (%reg)", rt, imm, rs);
+    sdc1.set_decoder(op=0x3D);
+
+    ldc1.set_asm("ldc1 %freg, %imm (%reg)", rt, imm, rs);
+    ldc1.set_decoder(op=0x35);
 
     pseudo_instr("li %reg, %imm") {
       "lui %0, \%hi(%1)";

@@ -26,7 +26,7 @@
 
 
 //If you want debug information for this model, uncomment next line
-#define DEBUG_MODEL
+//#define DEBUG_MODEL
 #include "ac_debug_model.H"
 
 
@@ -128,6 +128,16 @@ void ac_behavior( lw )
   dbg_printf("Result = %#x\n", RB[rt]);
 };
 
+//!Instruction ldc1 behavior method.
+void ac_behavior( ldc1 )
+{
+  dbg_printf("ldc1 %%f%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
+  RBF[rt] = DATA_PORT->read(RB[rs]+ imm);
+  RBF[rt + 1] = DATA_PORT->read(RB[rs]+ imm + 4);
+  double temp = load_double(rt);
+  dbg_printf("Result = %ld\n", temp);
+};
+
 //!Instruction lwl behavior method.
 void ac_behavior( lwl )
 {
@@ -186,6 +196,14 @@ void ac_behavior( sw )
   dbg_printf("sw r%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
   DATA_PORT->write(RB[rs] + imm, RB[rt]);
   dbg_printf("Result = %#x\n", RB[rt]);
+};
+
+//!Instruction sdc1 behavior method.
+void ac_behavior( sdc1 )
+{
+  dbg_printf("sdc1 %%f%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
+  DATA_PORT->write(RB[rs] + imm, RBF[rt]);
+  DATA_PORT->write(RB[rs] + imm + 4, RBF[rt + 1]);
 };
 
 //!Instruction swl behavior method.
@@ -712,11 +730,22 @@ void ac_behavior( bgezal )
 //!Instruction sys_call behavior method.
 void ac_behavior( sys_call )
 {
-  dbg_printf("Syscall number: 0x%X\t(%d)\n", code, code);
-  if (syscall.process_syscall(code) == -1) {
-    fprintf(stderr, "Warning: Unimplemented syscall.\n");
-    fprintf(stderr, "\tCaller address: 0x%X\n\tSyscall number: 0x%X\t%d\n",
-            (unsigned int)ac_pc, code, code);
+  if (code == 0) {
+    // o32 abi, expected syscall number is in $v0 ($2)
+    uint32_t sysnum = RB[2];
+    dbg_printf("Syscall number: 0x%X\t(%d)\n", sysnum, sysnum);
+    if (syscall.process_syscall(sysnum) == -1) {
+      fprintf(stderr, "Warning: Unimplemented syscall.\n");
+      fprintf(stderr, "\tCaller address: 0x%X\n\tSyscall number: 0x%X\t%d\n",
+              (unsigned int)ac_pc, sysnum, sysnum);
+    }
+  } else {
+    dbg_printf("Syscall number: 0x%X\t(%d)\n", code, code);
+    if (syscall.process_syscall(code) == -1) {
+      fprintf(stderr, "Warning: Unimplemented syscall.\n");
+      fprintf(stderr, "\tCaller address: 0x%X\n\tSyscall number: 0x%X\t%d\n",
+              (unsigned int)ac_pc, code, code);
+    }
   }
 }
 
@@ -726,3 +755,33 @@ void ac_behavior( instr_break )
   fprintf(stderr, "instr_break behavior not implemented.\n"); 
   exit(EXIT_FAILURE);
 }
+
+void ac_behavior( seb )
+{
+  dbg_printf("seb r%d, r%d\n", rd, rt);
+  RB[rd] = sign_extend(RB[rt], 8);
+  dbg_printf("Result = %#x\n", RB[rd]);
+};
+
+void ac_behavior( seh )
+{
+  dbg_printf("seh r%d, r%d\n", rd, rt);
+  RB[rd] = sign_extend(RB[rt], 16);
+  dbg_printf("Result = %#x\n", RB[rd]);
+};
+
+void ac_behavior( movz )
+{
+  dbg_printf("movz r%d, r%d, r%d\n", rd, rs, rt);
+  if (RB[rt] == 0)
+    RB[rd] = RB[rs];
+  dbg_printf("Result = %#x\n", RB[rd]);
+};
+
+void ac_behavior( movn )
+{
+  dbg_printf("movn r%d, r%d, r%d\n", rd, rs, rt);
+  if (RB[rt] != 0)
+    RB[rd] = RB[rs];
+  dbg_printf("Result = %#x\n", RB[rd]);
+};

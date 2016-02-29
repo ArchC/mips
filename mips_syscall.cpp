@@ -48,6 +48,13 @@ void mips_syscall::get_buffer(int argn, unsigned char* buf, unsigned int size)
   }
 }
 
+void mips_syscall::get_buffer_addr(uint32_t addr, unsigned char *buf,
+                                   unsigned int size) {
+  for (unsigned int i = 0; i<size; i++, addr++) {
+    buf[i] = DATA_PORT->read_byte(addr);
+  }
+}
+
 void mips_syscall::set_buffer(int argn, unsigned char* buf, unsigned int size)
 {
   unsigned int addr = RB[4+argn];
@@ -76,7 +83,7 @@ int mips_syscall::get_int(int argn)
 
 void mips_syscall::set_int(int argn, int val)
 {
-  RB[4+argn] = val;
+  RB[2+argn] = val;
 }
 
 void mips_syscall::return_from_syscall()

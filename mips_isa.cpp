@@ -738,15 +738,28 @@ void ac_behavior( sys_call )
       fprintf(stderr, "Warning: Unimplemented syscall.\n");
       fprintf(stderr, "\tCaller address: 0x%X\n\tSyscall number: 0x%X\t%d\n",
               (unsigned int)ac_pc, sysnum, sysnum);
+      RB[2] = -1;
     }
+    // Sets a3 to 1 or 0 for error/success
+    if (RB[2] == -1)
+      RB[7] = 1;
+    else
+      RB[7] = 0;
   } else {
     dbg_printf("Syscall number: 0x%X\t(%d)\n", code, code);
     if (syscall.process_syscall(code) == -1) {
       fprintf(stderr, "Warning: Unimplemented syscall.\n");
       fprintf(stderr, "\tCaller address: 0x%X\n\tSyscall number: 0x%X\t%d\n",
               (unsigned int)ac_pc, code, code);
+      RB[2] = -1;
     }
+    if (RB[2] == -1)
+      RB[7] = 1;
+    else
+      RB[7] = 0;
+
   }
+  dbg_printf("Result = %#x\n", RB[2]);
 }
 
 //!Instruction instr_break behavior method.
@@ -768,6 +781,22 @@ void ac_behavior( seh )
   dbg_printf("seh r%d, r%d\n", rd, rt);
   RB[rd] = sign_extend(RB[rt], 16);
   dbg_printf("Result = %#x\n", RB[rd]);
+};
+
+void ac_behavior( mul )
+{
+  dbg_printf("mul %%%d, %%%d, %%%d\n", rd, rs, rt);
+  RB[rd] = RB[rs] * RB[rt];
+  dbg_printf("Result = %#x\n", RB[rd]);
+};
+
+void ac_behavior( teq )
+{
+  dbg_printf("teq %%%d, %%%d\n", rs, rt);
+  if (RB[rs] == RB[rt]) {
+    fprintf(stderr, "Trap generated at PC=0x%X\n", (uint32_t) ac_pc);
+    exit(EXIT_FAILURE);
+  }
 };
 
 void ac_behavior( movz )

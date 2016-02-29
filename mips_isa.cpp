@@ -26,7 +26,7 @@
 
 
 //If you want debug information for this model, uncomment next line
-//#define DEBUG_MODEL
+#define DEBUG_MODEL
 #include "ac_debug_model.H"
 
 
@@ -741,7 +741,7 @@ void ac_behavior( sys_call )
       RB[2] = -1;
     }
     // Sets a3 to 1 or 0 for error/success
-    if (RB[2] == -1)
+    if ((int)RB[2] < 0)
       RB[7] = 1;
     else
       RB[7] = 0;
@@ -753,7 +753,7 @@ void ac_behavior( sys_call )
               (unsigned int)ac_pc, code, code);
       RB[2] = -1;
     }
-    if (RB[2] == -1)
+    if ((int)RB[2] < 0)
       RB[7] = 1;
     else
       RB[7] = 0;

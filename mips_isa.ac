@@ -47,6 +47,7 @@ AC_ISA(mips){
 
   // mips-II
   ac_instr<Type_R> sync, teq;
+  ac_instr<Type_I> ll, sc;
 
   // mips-IV
   ac_instr<Type_R> movz, movn;
@@ -333,6 +334,12 @@ AC_ISA(mips){
 
     teq.set_asm("teq %reg, %reg", rs, rt);
     teq.set_decoder(op=0x00, func=0x34);
+
+    ll.set_asm("ll %reg, %imm (%reg)", rt, imm, rs);
+    ll.set_decoder(op=0x30);
+
+    sc.set_asm("sc %reg, %imm (%reg)", rt, imm, rs);
+    sc.set_decoder(op=0x38);
 
     movz.set_asm("movz %reg, %reg, %reg", rd, rs, rt);
     movz.set_decoder(op=0x00, shamt=0x00, func=0x0A);

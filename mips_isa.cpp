@@ -786,6 +786,21 @@ void ac_behavior( mul )
   dbg_printf("Result = %#x\n", RB[rd]);
 };
 
+void ac_behavior( ll )
+{
+  dbg_printf("ll r%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
+  RB[rt] = DATA_PORT->read(RB[rs]+ imm);
+  dbg_printf("Result = %#x\n", RB[rt]);
+}
+
+void ac_behavior( sc )
+{
+  dbg_printf("sc r%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
+  DATA_PORT->write(RB[rs] + imm, RB[rt]);
+  RB[rt] = 1;
+  dbg_printf("Result = %#x\n", RB[rt]);
+}
+
 void ac_behavior( sync )
 {
   dbg_printf("sync\n");

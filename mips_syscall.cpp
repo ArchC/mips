@@ -158,6 +158,10 @@ unsigned mips_syscall::get_return() {
   return (unsigned) RB.read(31);
 }
 
+bool mips_syscall::is_mmap_anonymous(uint32_t flags) {
+  return flags & 0x800;
+}
+
 
 // MIPS syscalls mapping for process simulators
 //

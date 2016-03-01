@@ -94,32 +94,53 @@ void mips_syscall::return_from_syscall()
 
 void mips_syscall::set_prog_args(int argc, char **argv)
 {
-  int i, j, base;
-
-  unsigned int ac_argv[30];
+  // ac_argstr holds argument strings to be stored into guest memory
   char ac_argstr[512];
-
-  base = AC_RAM_END - 512 - procNumber * 64 * 1024;
-  for (i=0, j=0; i<argc; i++) {
-    int len = strlen(argv[i]) + 1;
-    ac_argv[i] = base + j;
-    memcpy(&ac_argstr[j], argv[i], len);
+  // guest_stack represents pre-allocated values into the guest stack
+  // passing information from kernel to userland (program args, etc)
+  //
+  // Memory diagram:
+  //   higher addresses  .. auxv
+  //                        envp pointers
+  //                        argv pointers
+  //   lower addresses   .. argc
+  uint32_t guest_stack_size = argc + 6;
+  uint32_t *guest_stack = (uint32_t *) malloc(sizeof(uint32_t) *
+                                              guest_stack_size);
+  uint32_t i = 0, j = 0;
+  uint32_t strtable = AC_RAM_END - 512 - procNumber * 64 * 1024;
+  guest_stack[i++] = argc;
+  for (uint32_t k = 0; k < argc; ++k) {
+    uint32_t len = strlen(argv[k]) + 1;
+    guest_stack[i++] = strtable + j;
+    if (j + len > 512) {
+      fprintf(stderr, "Fatal: argv strings bigger than 512 bytes.\n");
+      exit(EXIT_FAILURE);
+    }
+    memcpy(&ac_argstr[j], argv[k], len);
     j += len;
   }
+  // Set argv end
+  guest_stack[i++] = 0;
+  // Set envp
+  guest_stack[i++] = 0;
+  // Set auxv
+  guest_stack[i++] = 6; // AT_PAGESZ -
+                    // see http://articles.manugarg.com/aboutelfauxiliaryvectors
+  guest_stack[i++] = 4096; // page size
+  guest_stack[i++] = 0; // AT_NULL
 
-  RB[4] = base;
+  RB[4] = strtable;
   set_buffer(0, (unsigned char*) ac_argstr, 512);   //$25 = $29(sp) - 4 (set_buffer adds 4)
 
-  RB[4] = base - 120;
-  set_buffer_noinvert(0, (unsigned char*) ac_argv, 120);
+  RB[4] = strtable - guest_stack_size * 4;
+  set_buffer_noinvert(0, (unsigned char*) guest_stack, guest_stack_size * 4);
 
-  //RB[4] = AC_RAM_END-512-128;
+  RB[29] = strtable - guest_stack_size * 4;
 
-  //Set %o0 to the argument count
+  // FIXME: Necessary?
   RB[4] = argc;
-
-  //Set %o1 to the string pointers
-  RB[5] = base - 120;
+  RB[5] = strtable - guest_stack_size * 4 + 4;
 
   procNumber ++;
 }

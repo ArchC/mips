@@ -26,7 +26,7 @@
 
 
 //If you want debug information for this model, uncomment next line
-#define DEBUG_MODEL
+//#define DEBUG_MODEL
 #include "ac_debug_model.H"
 
 
@@ -62,16 +62,12 @@ void ac_behavior( Type_S ){}
 void ac_behavior(begin)
 {
   dbg_printf("@@@ begin behavior @@@\n");
-  RB[0] = 0;
   npc = ac_pc + 4;
 
-  // Is is not required by the architecture, but makes debug really easier
   for (int regNum = 0; regNum < 32; regNum ++)
     RB[regNum] = 0;
   hi = 0;
   lo = 0;
-
-  RB[29] =  AC_RAM_END - 1024 - processors_started++ * DEFAULT_STACK_SIZE;
 }
 
 //!Behavior called after finishing simulation
@@ -427,7 +423,7 @@ void ac_behavior( nop )
 //!Instruction sll behavior method.
 void ac_behavior( sll )
 {  
-  dbg_printf("sll r%d, r%d, %d\n", rd, rs, shamt);
+  dbg_printf("sll r%d, r%d, %d\n", rd, rt, shamt);
   RB[rd] = RB[rt] << shamt;
   dbg_printf("Result = %#x\n", RB[rd]);
 };
@@ -435,7 +431,7 @@ void ac_behavior( sll )
 //!Instruction srl behavior method.
 void ac_behavior( srl )
 {
-  dbg_printf("srl r%d, r%d, %d\n", rd, rs, shamt);
+  dbg_printf("srl r%d, r%d, %d\n", rd, rt, shamt);
   RB[rd] = RB[rt] >> shamt;
   dbg_printf("Result = %#x\n", RB[rd]);
 };
@@ -443,7 +439,7 @@ void ac_behavior( srl )
 //!Instruction sra behavior method.
 void ac_behavior( sra )
 {
-  dbg_printf("sra r%d, r%d, %d\n", rd, rs, shamt);
+  dbg_printf("sra r%d, r%d, %d\n", rd, rt, shamt);
   RB[rd] = (ac_Sword) RB[rt] >> shamt;
   dbg_printf("Result = %#x\n", RB[rd]);
 };

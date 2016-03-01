@@ -786,6 +786,11 @@ void ac_behavior( mul )
   dbg_printf("Result = %#x\n", RB[rd]);
 };
 
+void ac_behavior( sync )
+{
+  dbg_printf("sync\n");
+}
+
 void ac_behavior( teq )
 {
   dbg_printf("teq %%%d, %%%d\n", rs, rt);

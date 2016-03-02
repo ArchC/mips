@@ -190,7 +190,7 @@ void ac_behavior( coltd )
   dbg_printf("c.olt.d %%f%d, %%f%d\n", rd, rt);
   double a = load_double(rd);
   double b = load_double(rt);
-  cc = a < b ? 1 : (custom_isnan(a) || custom_isnan(b) ?  0 : 1);
+  cc = a < b ? (custom_isnan(a) || custom_isnan(b) ?  0 : 1) : 0;
   dbg_printf("Result = %d\n", cc.read());
 }
 

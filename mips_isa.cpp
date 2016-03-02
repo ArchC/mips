@@ -128,11 +128,20 @@ void ac_behavior( lw )
 void ac_behavior( ldc1 )
 {
   dbg_printf("ldc1 %%f%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
-  RBF[rt] = DATA_PORT->read(RB[rs]+ imm);
-  RBF[rt + 1] = DATA_PORT->read(RB[rs]+ imm + 4);
+  RBF[rt + 1] = DATA_PORT->read(RB[rs]+ imm);
+  RBF[rt] = DATA_PORT->read(RB[rs]+ imm + 4);
   double temp = load_double(rt);
-  dbg_printf("Result = %ld\n", temp);
+  dbg_printf("Result = %lf\n", temp);
 };
+
+void ac_behavior( ldxc1 )
+{
+  dbg_printf("ldxc1 %%f%d, %%%d(%%%d)\n", shamt, rt, rs);
+  RBF[shamt + 1] = DATA_PORT->read(RB[rt]+ RB[rs]);
+  RBF[shamt] = DATA_PORT->read(RB[rt]+ RB[rs]);
+  double temp = load_double(shamt);
+  dbg_printf("Result = %lf\n", temp);
+}
 
 //!Instruction lwl behavior method.
 void ac_behavior( lwl )
@@ -194,13 +203,177 @@ void ac_behavior( sw )
   dbg_printf("Result = %#x\n", RB[rt]);
 };
 
+void ac_behavior( addd )
+{
+  dbg_printf("add.d %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
+  double res = load_double(rd) + load_double(rt);
+  save_double(res, shamt);
+  dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( ceqd )
+{
+  dbg_printf("c.eq.d %%f%d, %%f%d\n", rd, rt);
+  cc = (load_double(rd) == load_double(rt)) ? 1 : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
+void ac_behavior( coltd )
+{
+  dbg_printf("c.olt.d %%f%d, %%f%d\n", rd, rt);
+  double a = load_double(rd);
+  double b = load_double(rt);
+  cc = a < b ? 1 : (custom_isnan(a) || custom_isnan(b) ?  0 : 1);
+  dbg_printf("Result = %d\n", cc.read());
+}
+
+void ac_behavior( cund )
+{
+  dbg_printf("c.un.d %%f%d, %%f%d\n", rd, rt);
+  cc = (custom_isnan(load_double(rd)) || custom_isnan(load_double(rt))) ? 1 : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
+void ac_behavior( cvtdw )
+{
+  dbg_printf("cvt.d.w %%f%d, %%f%d\n", shamt, rd);
+  double temp = (double) RBF[rd];
+  save_double(temp, shamt);
+  dbg_printf("Result = %lf\n", temp);
+}
+
+void ac_behavior( divd )
+{
+  dbg_printf("div.d %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
+  double res = load_double(rd) / load_double(rt);
+  save_double(res, shamt);
+  dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( mfc1 )
+{
+  dbg_printf("mfc1 %%%d, %%f%d\n", rt, rd);
+  RB[rt] = RBF[rd];
+  dbg_printf("Result = 0x%X\n", RB[rt]);
+}
+
+void ac_behavior( movd )
+{
+  dbg_printf("mov.d %%f%d, %%f%d\n", shamt, rd);
+  double res = load_double(rd);
+  save_double(res, shamt);
+  dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( muld )
+{
+  dbg_printf("mul.d %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
+  double res = load_double(rd) * load_double(rt);
+  save_double(res, shamt);
+  dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( mtc1 )
+{
+  dbg_printf("mtc1 %%%d, %%f%d\n", rt, rd);
+  RBF[rd] = RB[rt];
+}
+
+void ac_behavior( negd )
+{
+  dbg_printf("neg.d %%f%d, %%f%d\n", shamt, rd);
+  double res = - load_double(rt);
+  save_double(res, shamt);
+  dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( subd )
+{
+  dbg_printf("sub.d %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
+  double res = load_double(rd) - load_double(rt);
+  save_double(res, shamt);
+  dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( truncwd )
+{
+  dbg_printf("trunc.w.d %%f%d, %%f%d\n", shamt, rd);
+  RBF[shamt] = (int32_t) load_double(rd);
+  dbg_printf("Result = %d\n", RBF[shamt]);
+}
+
+void ac_behavior( bc1f )
+{
+  dbg_printf("bc1f %d\n", imm & 0xFFFF);
+  if(cc == 0) {
+#ifndef NO_NEED_PC_UPDATE
+    npc = ac_pc + (imm<<2);
+#endif
+    dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
+  }
+}
+
+void ac_behavior( bc1fl )
+{
+  dbg_printf("bc1fl %d\n", imm & 0xFFFF);
+  if(cc == 0) {
+#ifndef NO_NEED_PC_UPDATE
+    npc = ac_pc + (imm<<2);
+#endif
+    dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
+  }
+}
+
+void ac_behavior( bc1t )
+{
+  dbg_printf("bc1t %d\n", imm & 0xFFFF);
+  if(cc == 1) {
+#ifndef NO_NEED_PC_UPDATE
+    npc = ac_pc + (imm<<2);
+#endif
+    dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
+  }
+}
+
+void ac_behavior( bc1tl )
+{
+  dbg_printf("bc1tl %d\n", imm & 0xFFFF);
+  if(cc == 1) {
+#ifndef NO_NEED_PC_UPDATE
+    npc = ac_pc + (imm<<2);
+#endif
+    dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
+  }
+}
+
 //!Instruction sdc1 behavior method.
 void ac_behavior( sdc1 )
 {
   dbg_printf("sdc1 %%f%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
-  DATA_PORT->write(RB[rs] + imm, RBF[rt]);
-  DATA_PORT->write(RB[rs] + imm + 4, RBF[rt + 1]);
+  DATA_PORT->write(RB[rs] + imm + 4, RBF[rt]);
+  DATA_PORT->write(RB[rs] + imm, RBF[rt + 1]);
 };
+
+void ac_behavior( mfhc1 )
+{
+  dbg_printf("mfhc1 %%%d, %%f%d\n", rt, rd);
+  uint64_t temp;
+  double input = load_double(rd);
+  memcpy(&temp, &input, sizeof(uint64_t));
+  RB[rt] = temp >> 32;
+  dbg_printf("Result = 0x%X\n", RB[rt]);
+}
+
+void ac_behavior( mthc1 )
+{
+  dbg_printf("mthc1 %%%d, %%f%d\n", rt, rd);
+  double temp = load_double(rd);
+  uint64_t to_int;
+  memcpy(&to_int, &temp, sizeof(uint64_t));
+  to_int = (to_int & 0xFFFFFFFFULL) + (((uint64_t)RB[rt]) << 32);
+  memcpy(&temp, &to_int, sizeof(uint64_t));
+  save_double(temp, rd);
+}
 
 //!Instruction swl behavior method.
 void ac_behavior( swl )
@@ -779,6 +952,15 @@ void ac_behavior( seh )
   dbg_printf("Result = %#x\n", RB[rd]);
 };
 
+void ac_behavior( ext )
+{
+  dbg_printf("ext r%d, r%d, %d, %d\n", rt, rs, shamt, rd);
+  uint32_t lsb = shamt;   // 20
+  uint32_t size = rd + 1; // 11   - 32 - 11 = 21 - 20 = 1
+  RB[rt] = (RB[rs] << (32 - size - lsb)) >> (32 - size);
+  dbg_printf("Result = %#x\n", RB[rt]);
+}
+
 void ac_behavior( mul )
 {
   dbg_printf("mul %%%d, %%%d, %%%d\n", rd, rs, rt);
@@ -830,3 +1012,19 @@ void ac_behavior( movn )
     RB[rd] = RB[rs];
   dbg_printf("Result = %#x\n", RB[rd]);
 };
+
+void ac_behavior( movf )
+{
+  dbg_printf("movf r%d, r%d, %%fcc0\n", rd, rs);
+  if (cc == 0)
+    RB[rd] = RB[rs];
+  dbg_printf("Result = %#x\n", RB[rd]);
+}
+
+void ac_behavior( movt )
+{
+  dbg_printf("movt r%d, r%d, %%fcc0\n", rd, rs);
+  if (cc != 0)
+    RB[rd] = RB[rs];
+  dbg_printf("Result = %#x\n", RB[rd]);
+}

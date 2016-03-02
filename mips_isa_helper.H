@@ -27,9 +27,23 @@ static inline int32_t sign_extend(int32_t word, int word_length) {
 }
 
 inline double load_double(uint32_t index) {
-  return (double) (RBF[index] + ((uint64_t) RBF[index + 1]) << 32);
+  double res;
+  uint64_t input = ((uint64_t)RBF[index]) + (((uint64_t)RBF[index + 1]) << 32);
+  memcpy(&res, &input, sizeof(input));
+  return res;
+}
+
+inline double save_double(double input, uint32_t index) {
+  uint64_t temp;
+  memcpy(&temp, &input, sizeof(temp));
+  RBF[index] = temp & 0xFFFFFFFF;
+  RBF[index + 1] = temp >> 32;
 }
 
 inline float load_float(uint32_t index) {
   return (float) RBF[index];
+}
+
+static bool custom_isnan(double var) {
+  return var != var;
 }

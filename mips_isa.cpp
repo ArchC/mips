@@ -170,6 +170,14 @@ void ac_behavior( sw )
   dbg_printf("Result = %#x\n", RB[rt]);
 }
 
+void ac_behavior( absd )
+{
+  dbg_printf("abs.d %%f%d, %%f%d\n", shamt, rd);
+  double res = fabs(load_double(rd));
+  save_double(res, shamt);
+  dbg_printf("Result = %lf\n", res);
+}
+
 void ac_behavior( addd )
 {
   dbg_printf("add.d %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
@@ -181,7 +189,18 @@ void ac_behavior( addd )
 void ac_behavior( ceqd )
 {
   dbg_printf("c.eq.d %%f%d, %%f%d\n", rd, rt);
-  cc = (load_double(rd) == load_double(rt)) ? 1 : 0;
+  double a = load_double(rd);
+  double b = load_double(rt);
+  cc = a == b ? (custom_isnan(a) || custom_isnan(b) ?  0 : 1) : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
+void ac_behavior( coled )
+{
+  dbg_printf("c.ole.d %%f%d, %%f%d\n", rd, rt);
+  double a = load_double(rd);
+  double b = load_double(rt);
+  cc = a <= b ? (custom_isnan(a) || custom_isnan(b) ?  0 : 1) : 0;
   dbg_printf("Result = %d\n", cc.read());
 }
 
@@ -191,6 +210,27 @@ void ac_behavior( coltd )
   double a = load_double(rd);
   double b = load_double(rt);
   cc = a < b ? (custom_isnan(a) || custom_isnan(b) ?  0 : 1) : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
+void ac_behavior( cueqd )
+{
+  dbg_printf("c.ueq.d %%f%d, %%f%d\n", rd, rt);
+  cc = (load_double(rd) == load_double(rt)) ? 1 : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
+void ac_behavior( culed )
+{
+  dbg_printf("c.ule.d %%f%d, %%f%d\n", rd, rt);
+  cc = (load_double(rd) <= load_double(rt)) ? 1 : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
+void ac_behavior( cultd )
+{
+  dbg_printf("c.ult.d %%f%d, %%f%d\n", rd, rt);
+  cc = (load_double(rd) < load_double(rt)) ? 1 : 0;
   dbg_printf("Result = %d\n", cc.read());
 }
 
@@ -204,7 +244,7 @@ void ac_behavior( cund )
 void ac_behavior( cvtdw )
 {
   dbg_printf("cvt.d.w %%f%d, %%f%d\n", shamt, rd);
-  double temp = (double) RBF[rd];
+  double temp = (double) (int) RBF[rd];
   save_double(temp, shamt);
   dbg_printf("Result = %lf\n", temp);
 }
@@ -879,10 +919,27 @@ void ac_behavior( seh )
 void ac_behavior( ext )
 {
   dbg_printf("ext r%d, r%d, %d, %d\n", rt, rs, shamt, rd);
-  uint32_t lsb = shamt;   // 20
-  uint32_t size = rd + 1; // 11   - 32 - 11 = 21 - 20 = 1
+  uint32_t lsb = shamt;
+  uint32_t size = rd + 1;
   RB[rt] = (RB[rs] << (32 - size - lsb)) >> (32 - size);
   dbg_printf("Result = %#x\n", RB[rt]);
+}
+
+void ac_behavior( clz )
+{
+  dbg_printf("clz %%%d, %%%d\n", rd, rs);
+  uint32_t x = RB[rs];
+  x |= x >> 1;
+  x |= x >> 2;
+  x |= x >> 4;
+  x |= x >> 8;
+  x |= x >> 16;
+  x = ffs(x + 1);
+  if (x != 0) {
+    x = 32 - x + 1;
+  }
+  RB[rd] = x;
+  dbg_printf("Result = %#x\n", x);
 }
 
 void ac_behavior( mul )
@@ -937,6 +994,24 @@ void ac_behavior( movn )
   dbg_printf("Result = %#x\n", RB[rd]);
 }
 
+void ac_behavior( movzd )
+{
+  dbg_printf("movz.d %%f%d, %%f%d, %%%d\n", shamt, rd, rt);
+  if (RB[rt] != 0) {
+    RBF[shamt] = RBF[rd];
+    RBF[shamt + 1] = RBF[rd + 1];
+  }
+}
+
+void ac_behavior( movnd )
+{
+  dbg_printf("movn.d %%f%d, %%f%d, %%%d\n", shamt, rd, rt);
+  if (RB[rt] != 0) {
+    RBF[shamt] = RBF[rd];
+    RBF[shamt + 1] = RBF[rd + 1];
+  }
+}
+
 void ac_behavior( movf )
 {
   dbg_printf("movf r%d, r%d, %%fcc0\n", rd, rs);
@@ -951,4 +1026,20 @@ void ac_behavior( movt )
   if (cc != 0)
     RB[rd] = RB[rs];
   dbg_printf("Result = %#x\n", RB[rd]);
+}
+
+void ac_behavior( maddd )
+{
+  dbg_printf("madd.d %%f%d, %%f%d, %%f%d, %%f%d\n", shamt, rs, rd, rt);
+  double res = load_double(rd) * load_double(rt) + load_double(rs);
+  save_double(res, shamt);
+  dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( msubd )
+{
+  dbg_printf("msub.d %%f%d, %%f%d, %%f%d, %%f%d\n", shamt, rs, rd, rt);
+  double res = load_double(rd) * load_double(rt) - load_double(rs);
+  save_double(res, shamt);
+  dbg_printf("Result = %lf\n", res);
 }

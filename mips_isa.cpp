@@ -248,6 +248,14 @@ void ac_behavior( cund )
   dbg_printf("Result = %d\n", cc.read());
 }
 
+void ac_behavior( cvtsd )
+{
+  dbg_printf("cvt.s.d %%f%d, %%f%d\n", shamt, rd);
+  float temp = (float) load_double(rd);
+  memcpy(&RBF[shamt], &temp, sizeof(uint32_t));
+  dbg_printf("Result = %f\n", temp);
+}
+
 void ac_behavior( cvtdw )
 {
   dbg_printf("cvt.d.w %%f%d, %%f%d\n", shamt, rd);

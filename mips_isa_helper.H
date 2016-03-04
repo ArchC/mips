@@ -33,7 +33,7 @@ inline double load_double(uint32_t index) {
   return res;
 }
 
-inline double save_double(double input, uint32_t index) {
+inline void save_double(double input, uint32_t index) {
   uint64_t temp;
   memcpy(&temp, &input, sizeof(temp));
   RBF[index] = temp & 0xFFFFFFFF;
@@ -41,9 +41,19 @@ inline double save_double(double input, uint32_t index) {
 }
 
 inline float load_float(uint32_t index) {
-  return (float) RBF[index];
+  float res;
+  memcpy(&res, &RBF[index], sizeof(uint32_t));
+  return res;
+}
+
+inline void save_float(float input, uint32_t index) {
+  memcpy(&RBF[index], &input, sizeof(uint32_t));
 }
 
 static bool custom_isnan(double var) {
+  return var != var;
+}
+
+static bool custom_isnanf(float var) {
   return var != var;
 }

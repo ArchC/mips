@@ -185,6 +185,14 @@ void ac_behavior( absd )
   dbg_printf("Result = %lf\n", res);
 }
 
+void ac_behavior( abss )
+{
+  dbg_printf("abs.s %%f%d, %%f%d\n", shamt, rd);
+  float res = fabsf(load_float(rd));
+  save_float(res, shamt);
+  dbg_printf("Result = %f\n", res);
+}
+
 void ac_behavior( addd )
 {
   dbg_printf("add.d %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
@@ -193,12 +201,29 @@ void ac_behavior( addd )
   dbg_printf("Result = %lf\n", res);
 }
 
+void ac_behavior( adds )
+{
+  dbg_printf("add.s %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
+  float res = load_float(rd) + load_float(rt);
+  save_float(res, shamt);
+  dbg_printf("Result = %f\n", res);
+}
+
 void ac_behavior( ceqd )
 {
   dbg_printf("c.eq.d %%f%d, %%f%d\n", rd, rt);
   double a = load_double(rd);
   double b = load_double(rt);
   cc = a == b ? (custom_isnan(a) || custom_isnan(b) ?  0 : 1) : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
+void ac_behavior( ceqs )
+{
+  dbg_printf("c.eq.s %%f%d, %%f%d\n", rd, rt);
+  float a = load_float(rd);
+  float b = load_float(rt);
+  cc = a == b ? (custom_isnanf(a) || custom_isnanf(b) ?  0 : 1) : 0;
   dbg_printf("Result = %d\n", cc.read());
 }
 
@@ -211,12 +236,30 @@ void ac_behavior( coled )
   dbg_printf("Result = %d\n", cc.read());
 }
 
+void ac_behavior( coles )
+{
+  dbg_printf("c.ole.s %%f%d, %%f%d\n", rd, rt);
+  float a = load_float(rd);
+  float b = load_float(rt);
+  cc = a <= b ? (custom_isnanf(a) || custom_isnanf(b) ?  0 : 1) : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
 void ac_behavior( coltd )
 {
   dbg_printf("c.olt.d %%f%d, %%f%d\n", rd, rt);
   double a = load_double(rd);
   double b = load_double(rt);
   cc = a < b ? (custom_isnan(a) || custom_isnan(b) ?  0 : 1) : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
+void ac_behavior( colts )
+{
+  dbg_printf("c.olt.s %%f%d, %%f%d\n", rd, rt);
+  float a = load_double(rd);
+  float b = load_double(rt);
+  cc = a < b ? (custom_isnanf(a) || custom_isnanf(b) ?  0 : 1) : 0;
   dbg_printf("Result = %d\n", cc.read());
 }
 
@@ -227,10 +270,24 @@ void ac_behavior( cueqd )
   dbg_printf("Result = %d\n", cc.read());
 }
 
+void ac_behavior( cueqs )
+{
+  dbg_printf("c.ueq.s %%f%d, %%f%d\n", rd, rt);
+  cc = (load_float(rd) == load_float(rt)) ? 1 : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
 void ac_behavior( culed )
 {
   dbg_printf("c.ule.d %%f%d, %%f%d\n", rd, rt);
   cc = (load_double(rd) <= load_double(rt)) ? 1 : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
+void ac_behavior( cules )
+{
+  dbg_printf("c.ule.s %%f%d, %%f%d\n", rd, rt);
+  cc = (load_float(rd) <= load_float(rt)) ? 1 : 0;
   dbg_printf("Result = %d\n", cc.read());
 }
 
@@ -241,6 +298,13 @@ void ac_behavior( cultd )
   dbg_printf("Result = %d\n", cc.read());
 }
 
+void ac_behavior( cults )
+{
+  dbg_printf("c.ult.s %%f%d, %%f%d\n", rd, rt);
+  cc = (load_float(rd) < load_float(rt)) ? 1 : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
 void ac_behavior( cund )
 {
   dbg_printf("c.un.d %%f%d, %%f%d\n", rd, rt);
@@ -248,12 +312,27 @@ void ac_behavior( cund )
   dbg_printf("Result = %d\n", cc.read());
 }
 
+void ac_behavior( cuns )
+{
+  dbg_printf("c.un.s %%f%d, %%f%d\n", rd, rt);
+  cc = (custom_isnanf(load_float(rd)) || custom_isnanf(load_float(rt))) ? 1 : 0;
+  dbg_printf("Result = %d\n", cc.read());
+}
+
 void ac_behavior( cvtsd )
 {
   dbg_printf("cvt.s.d %%f%d, %%f%d\n", shamt, rd);
   float temp = (float) load_double(rd);
-  memcpy(&RBF[shamt], &temp, sizeof(uint32_t));
+  save_float(temp, shamt);
   dbg_printf("Result = %f\n", temp);
+}
+
+void ac_behavior( cvtds )
+{
+  dbg_printf("cvt.d.s %%f%d, %%f%d\n", shamt, rd);
+  double temp = (double) load_float(rd);
+  save_double(temp, shamt);
+  dbg_printf("Result = %lf\n", temp);
 }
 
 void ac_behavior( cvtdw )
@@ -264,12 +343,28 @@ void ac_behavior( cvtdw )
   dbg_printf("Result = %lf\n", temp);
 }
 
+void ac_behavior( cvtsw )
+{
+  dbg_printf("cvt.s.w %%f%d, %%f%d\n", shamt, rd);
+  float temp = (float) (int) RBF[rd];
+  save_float(temp, shamt);
+  dbg_printf("Result = %f\n", temp);
+}
+
 void ac_behavior( divd )
 {
   dbg_printf("div.d %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
   double res = load_double(rd) / load_double(rt);
   save_double(res, shamt);
   dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( divs )
+{
+  dbg_printf("div.s %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
+  float res = load_float(rd) / load_float(rt);
+  save_float(res, shamt);
+  dbg_printf("Result = %f\n", res);
 }
 
 void ac_behavior( mfc1 )
@@ -287,12 +382,28 @@ void ac_behavior( movd )
   dbg_printf("Result = %lf\n", res);
 }
 
+void ac_behavior( movs )
+{
+  dbg_printf("mov.s %%f%d, %%f%d\n", shamt, rd);
+  float res = load_float(rd);
+  save_float(res, shamt);
+  dbg_printf("Result = %f\n", res);
+}
+
 void ac_behavior( muld )
 {
   dbg_printf("mul.d %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
   double res = load_double(rd) * load_double(rt);
   save_double(res, shamt);
   dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( muls )
+{
+  dbg_printf("mul.s %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
+  float res = load_float(rd) * load_float(rt);
+  save_float(res, shamt);
+  dbg_printf("Result = %f\n", res);
 }
 
 void ac_behavior( mtc1 )
@@ -309,12 +420,28 @@ void ac_behavior( negd )
   dbg_printf("Result = %lf\n", res);
 }
 
+void ac_behavior( negs )
+{
+  dbg_printf("neg.s %%f%d, %%f%d\n", shamt, rd);
+  float res = - load_float(rt);
+  save_float(res, shamt);
+  dbg_printf("Result = %f\n", res);
+}
+
 void ac_behavior( subd )
 {
   dbg_printf("sub.d %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
   double res = load_double(rd) - load_double(rt);
   save_double(res, shamt);
   dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( subs )
+{
+  dbg_printf("sub.s %%f%d, %%f%d, %%f%d\n", shamt, rd, rt);
+  float res = load_float(rd) - load_float(rt);
+  save_float(res, shamt);
+  dbg_printf("Result = %f\n", res);
 }
 
 void ac_behavior( truncwd )
@@ -324,12 +451,27 @@ void ac_behavior( truncwd )
   dbg_printf("Result = %d\n", RBF[shamt]);
 }
 
+void ac_behavior( truncws )
+{
+  dbg_printf("trunc.w.s %%f%d, %%f%d\n", shamt, rd);
+  RBF[shamt] = (int32_t) load_float(rd);
+  dbg_printf("Result = %d\n", RBF[shamt]);
+}
+
 void ac_behavior( sqrtd )
 {
   dbg_printf("sqrt.d %%f%d, %%f%d\n", shamt, rd);
   double res = sqrt(load_double(rd));
   save_double(res, shamt);
   dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( sqrts )
+{
+  dbg_printf("sqrt.s %%f%d, %%f%d\n", shamt, rd);
+  float res = sqrtf(load_float(rd));
+  save_float(res, shamt);
+  dbg_printf("Result = %f\n", res);
 }
 
 void ac_behavior( bc1f )
@@ -1032,12 +1174,28 @@ void ac_behavior( movzd )
   }
 }
 
+void ac_behavior( movzs )
+{
+  dbg_printf("movz.s %%f%d, %%f%d, %%%d\n", shamt, rd, rt);
+  if (RB[rt] != 0) {
+    RBF[shamt] = RBF[rd];
+  }
+}
+
 void ac_behavior( movnd )
 {
   dbg_printf("movn.d %%f%d, %%f%d, %%%d\n", shamt, rd, rt);
   if (RB[rt] != 0) {
     RBF[shamt] = RBF[rd];
     RBF[shamt + 1] = RBF[rd + 1];
+  }
+}
+
+void ac_behavior( movns )
+{
+  dbg_printf("movn.s %%f%d, %%f%d, %%%d\n", shamt, rd, rt);
+  if (RB[rt] != 0) {
+    RBF[shamt] = RBF[rd];
   }
 }
 
@@ -1066,12 +1224,28 @@ void ac_behavior( movtd )
   }
 }
 
+void ac_behavior( movts )
+{
+  dbg_printf("movt.s %%f%d, %%f%d, %%fcc0\n", shamt, rd);
+  if (cc != 0) {
+    RBF[shamt] = RBF[rd];
+  }
+}
+
 void ac_behavior( movfd )
 {
   dbg_printf("movf.d %%f%d, %%f%d, %%fcc0\n", shamt, rd);
   if (cc == 0) {
     RBF[shamt] = RBF[rd];
     RBF[shamt + 1] = RBF[rd + 1];
+  }
+}
+
+void ac_behavior( movfs )
+{
+  dbg_printf("movf.s %%f%d, %%f%d, %%fcc0\n", shamt, rd);
+  if (cc == 0) {
+    RBF[shamt] = RBF[rd];
   }
 }
 
@@ -1083,10 +1257,26 @@ void ac_behavior( maddd )
   dbg_printf("Result = %lf\n", res);
 }
 
+void ac_behavior( madds )
+{
+  dbg_printf("madd.s %%f%d, %%f%d, %%f%d, %%f%d\n", shamt, rs, rd, rt);
+  float res = load_float(rd) * load_float(rt) + load_float(rs);
+  save_float(res, shamt);
+  dbg_printf("Result = %f\n", res);
+}
+
 void ac_behavior( msubd )
 {
   dbg_printf("msub.d %%f%d, %%f%d, %%f%d, %%f%d\n", shamt, rs, rd, rt);
   double res = load_double(rd) * load_double(rt) - load_double(rs);
   save_double(res, shamt);
   dbg_printf("Result = %lf\n", res);
+}
+
+void ac_behavior( msubs )
+{
+  dbg_printf("msub.s %%f%d, %%f%d, %%f%d, %%f%d\n", shamt, rs, rd, rt);
+  float res = load_float(rd) * load_float(rt) - load_float(rs);
+  save_float(res, shamt);
+  dbg_printf("Result = %f\n", res);
 }

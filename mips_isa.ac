@@ -59,16 +59,19 @@ AC_ISA(mips){
   ac_instr<Type_R> seb, seh, ext;
 
   // FPU instructions - mips-I
-  ac_instr<Type_R> absd, addd, ceqd, coled, coltd, cueqd, culed, cultd, cund;
-  ac_instr<Type_R> cvtsd, cvtdw, divd, mfc1, movd, muld, mtc1, negd, subd;
-  ac_instr<Type_R> truncwd;
+  ac_instr<Type_R> absd, abss, addd, adds, ceqd, ceqs, coled, coles, coltd;
+  ac_instr<Type_R> colts, cueqd, cueqs, culed, cules, cultd, cults, cund;
+  ac_instr<Type_R> cuns, cvtsd, cvtds, cvtdw, cvtsw, divd, divs, mfc1, movd;
+  ac_instr<Type_R> movs, muld, muls, mtc1, negd, negs, subd, subs;
+  ac_instr<Type_R> truncwd, truncws;
   ac_instr<Type_I> bc1tl, bc1t, bc1f, bc1fl, sdc1, ldc1, swc1, lwc1;
 
   // FPU instructions - mips-II
-  ac_instr<Type_R> sqrtd;
+  ac_instr<Type_R> sqrtd, sqrts;
 
   // FPU instructions - mips IV
   ac_instr<Type_R> movf, movt, maddd, msubd, movzd, movnd, movtd, movfd;
+  ac_instr<Type_R> madds, msubs, movns, movts, movfs, movzs;
 
   // FPU instructions - mips32r2
   ac_instr<Type_R> mfhc1, mthc1, ldxc1, sdxc1;
@@ -366,14 +369,26 @@ AC_ISA(mips){
     movzd.set_asm("movz.d %freg, %freg, %reg", shamt, rd, rt);
     movzd.set_decoder(op=0x11, rs=17, func=0x12);
 
+    movzs.set_asm("movz.s %freg, %freg, %reg", shamt, rd, rt);
+    movzs.set_decoder(op=0x11, rs=16, func=0x12);
+
     movnd.set_asm("movn.d %freg, %freg, %reg", shamt, rd, rt);
     movnd.set_decoder(op=0x11, rs=17, func=0x13);
+
+    movns.set_asm("movn.s %freg, %freg, %reg", shamt, rd, rt);
+    movns.set_decoder(op=0x11, rs=16, func=0x13);
 
     movtd.set_asm("movt.d %freg, %freg, fcc0", shamt, rd);
     movtd.set_decoder(op=0x11, rs=17, rt=0x1, func=0x11);
 
+    movts.set_asm("movt.s %freg, %freg, fcc0", shamt, rd);
+    movts.set_decoder(op=0x11, rs=16, rt=0x1, func=0x11);
+
     movfd.set_asm("movf.d %freg, %freg, fcc0", shamt, rd);
     movfd.set_decoder(op=0x11, rs=17, rt=0x0, func=0x11);
+
+    movfs.set_asm("movf.s %freg, %freg, fcc0", shamt, rd);
+    movfs.set_decoder(op=0x11, rs=16, rt=0x0, func=0x11);
 
     seb.set_asm("seb %reg, %reg", rd, rt);
     seb.set_decoder(op=0x1F, shamt=0x10, func=0x20);
@@ -387,38 +402,74 @@ AC_ISA(mips){
     absd.set_asm("abs.d %freg, %freg", shamt, rd);
     absd.set_decoder(op=0x11, rs=17, rt=0, func=0x05);
 
+    abss.set_asm("abs.s %freg, %freg", shamt, rd);
+    abss.set_decoder(op=0x11, rs=16, rt=0, func=0x05);
+
     addd.set_asm("add.d %freg, %freg, %freg", shamt, rd, rt);
     addd.set_decoder(op=0x11, rs=17, func=0x00);
+
+    adds.set_asm("add.s %freg, %freg, %freg", shamt, rd, rt);
+    adds.set_decoder(op=0x11, rs=16, func=0x00);
 
     ceqd.set_asm("c.eq.d %freg, %freg", rd, rt);
     ceqd.set_decoder(op=0x11, rs=17, shamt=0x00, func=0x32);
 
+    ceqs.set_asm("c.eq.s %freg, %freg", rd, rt);
+    ceqs.set_decoder(op=0x11, rs=16, shamt=0x00, func=0x32);
+
     coled.set_asm("c.ole.d %freg, %freg", rd, rt);
     coled.set_decoder(op=0x11, rs=17, shamt=0x00, func=0x36);
+
+    coles.set_asm("c.ole.s %freg, %freg", rd, rt);
+    coles.set_decoder(op=0x11, rs=16, shamt=0x00, func=0x36);
 
     coltd.set_asm("c.olt.d %freg, %freg", rd, rt);
     coltd.set_decoder(op=0x11, rs=17, shamt=0x00, func=0x34);
 
+    colts.set_asm("c.olt.s %freg, %freg", rd, rt);
+    colts.set_decoder(op=0x11, rs=16, shamt=0x00, func=0x34);
+
     cueqd.set_asm("c.ueq.d %freg, %freg", rd, rt);
     cueqd.set_decoder(op=0x11, rs=17, shamt=0x00, func=0x33);
+
+    cueqs.set_asm("c.ueq.s %freg, %freg", rd, rt);
+    cueqs.set_decoder(op=0x11, rs=16, shamt=0x00, func=0x33);
 
     culed.set_asm("c.ule.d %freg, %freg", rd, rt);
     culed.set_decoder(op=0x11, rs=17, shamt=0x00, func=0x37);
 
+    cules.set_asm("c.ule.s %freg, %freg", rd, rt);
+    cules.set_decoder(op=0x11, rs=16, shamt=0x00, func=0x37);
+
     cultd.set_asm("c.ult.d %freg, %freg", rd, rt);
     cultd.set_decoder(op=0x11, rs=17, shamt=0x00, func=0x35);
+
+    cults.set_asm("c.ult.s %freg, %freg", rd, rt);
+    cults.set_decoder(op=0x11, rs=16, shamt=0x00, func=0x35);
 
     cund.set_asm("c.un.d %freg, %freg", rd, rt);
     cund.set_decoder(op=0x11, rs=17, shamt=0x00, func=0x31);
 
+    cuns.set_asm("c.un.s %freg, %freg", rd, rt);
+    cuns.set_decoder(op=0x11, rs=16, shamt=0x00, func=0x31);
+
     cvtsd.set_asm("cvt.s.d %freg, %freg", shamt, rd);
     cvtsd.set_decoder(op=0x11, rs=17, rt=0x0, func=0x20);
+
+    cvtds.set_asm("cvt.d.s %freg, %freg", shamt, rd);
+    cvtds.set_decoder(op=0x11, rs=16, rt=0x0, func=0x21);
 
     cvtdw.set_asm("cvt.d.w %freg, %freg", shamt, rd);
     cvtdw.set_decoder(op=0x11, rs=20, rt=0x0, func=0x21);
 
+    cvtsw.set_asm("cvt.s.w %freg, %freg", shamt, rd);
+    cvtsw.set_decoder(op=0x11, rs=20, rt=0x0, func=0x20);
+
     divd.set_asm("div.d %freg, %freg, %freg", shamt, rd, rt);
     divd.set_decoder(op=0x11, rs=17, func=0x03);
+
+    divs.set_asm("div.s %freg, %freg, %freg", shamt, rd, rt);
+    divs.set_decoder(op=0x11, rs=16, func=0x03);
 
     mfc1.set_asm("mfc1 %reg, %freg", rt, rd);
     mfc1.set_decoder(op=0x11, rs=0x00, shamt=0x0, func=0x0);
@@ -426,8 +477,14 @@ AC_ISA(mips){
     movd.set_asm("mov.d %freg, %freg", shamt, rd);
     movd.set_decoder(op=0x11, rs=17, func=0x06, rt=0x00);
 
+    movs.set_asm("mov.s %freg, %freg", shamt, rd);
+    movs.set_decoder(op=0x11, rs=16, func=0x06, rt=0x00);
+
     muld.set_asm("mul.d %freg, %freg, %freg", shamt, rd, rt);
     muld.set_decoder(op=0x11, rs=17, func=0x02);
+
+    muls.set_asm("mul.s %freg, %freg, %freg", shamt, rd, rt);
+    muls.set_decoder(op=0x11, rs=16, func=0x02);
 
     mtc1.set_asm("mtc1 %reg, %freg", rt, rd);
     mtc1.set_decoder(op=0x11, rs=0x4, shamt=0x0, func=0x0);
@@ -435,11 +492,20 @@ AC_ISA(mips){
     negd.set_asm("neg.d %freg, %freg", shamt, rd);
     negd.set_decoder(op=0x11, rs=17, func=0x07, rt=0x00);
 
+    negs.set_asm("neg.s %freg, %freg", shamt, rd);
+    negs.set_decoder(op=0x11, rs=16, func=0x07, rt=0x00);
+
     subd.set_asm("sub.d %freg, %freg, %freg", shamt, rd, rt);
     subd.set_decoder(op=0x11, rs=17, func=0x01);
 
+    subs.set_asm("sub.s %freg, %freg, %freg", shamt, rd, rt);
+    subs.set_decoder(op=0x11, rs=16, func=0x01);
+
     truncwd.set_asm("trunc.w.d %freg, %freg", shamt, rd);
     truncwd.set_decoder(op=0x11, rs=17, rt=0, func=0x0d);
+
+    truncws.set_asm("trunc.w.s %freg, %freg", shamt, rd);
+    truncws.set_decoder(op=0x11, rs=16, rt=0, func=0x0d);
 
     sdc1.set_asm("sdc1 %freg, %imm (%reg)", rt, imm, rs);
     sdc1.set_decoder(op=0x3D);
@@ -455,6 +521,9 @@ AC_ISA(mips){
 
     sqrtd.set_asm("sqrt.d %freg, %freg", shamt, rd);
     sqrtd.set_decoder(op=0x11, rs=17, rt=0, func=0x04);
+
+    sqrts.set_asm("sqrt.s %freg, %freg", shamt, rd);
+    sqrts.set_decoder(op=0x11, rs=16, rt=0, func=0x04);
 
     bc1t.set_asm("bc1t %exp(pcrel)", imm);
     bc1t.set_decoder(op=0x11, rs=0x08, rt=0x01);
@@ -477,8 +546,14 @@ AC_ISA(mips){
     maddd.set_asm("madd.d %reg, %reg, %reg, %reg", shamt, rs, rd, rt);
     maddd.set_decoder(op=0x13, func=0x21);
 
+    madds.set_asm("madd.s %reg, %reg, %reg, %reg", shamt, rs, rd, rt);
+    madds.set_decoder(op=0x13, func=0x20);
+
     msubd.set_asm("msub.d %reg, %reg, %reg, %reg", shamt, rs, rd, rt);
     msubd.set_decoder(op=0x13, func=0x29);
+
+    msubs.set_asm("msub.s %reg, %reg, %reg, %reg", shamt, rs, rd, rt);
+    msubs.set_decoder(op=0x13, func=0x28);
 
     mfhc1.set_asm("mfhc1 %reg, %freg", rt, rd);
     mfhc1.set_decoder(op=0x11, rs=0x03, shamt=0x0, func=0x0);

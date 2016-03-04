@@ -257,8 +257,8 @@ void ac_behavior( coltd )
 void ac_behavior( colts )
 {
   dbg_printf("c.olt.s %%f%d, %%f%d\n", rd, rt);
-  float a = load_double(rd);
-  float b = load_double(rt);
+  float a = load_float(rd);
+  float b = load_float(rt);
   cc = a < b ? (custom_isnanf(a) || custom_isnanf(b) ?  0 : 1) : 0;
   dbg_printf("Result = %d\n", cc.read());
 }

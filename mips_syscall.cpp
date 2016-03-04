@@ -596,7 +596,8 @@ int *mips_syscall::get_syscall_table() {
     MIPS__NR_exit_group,
     MIPS__NR_socketcall,
     MIPS__NR_gettimeofday,
-    MIPS__NR_settimeofday
+    MIPS__NR_settimeofday,
+    MIPS__NR_clock_gettime
   };
   return syscall_table;
 }

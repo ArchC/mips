@@ -1096,6 +1096,20 @@ void ac_behavior( ext )
   dbg_printf("Result = %#x\n", RB[rt]);
 }
 
+void ac_behavior( rotr )
+{
+  dbg_printf("rotr r%d, r%d, %d\n", rd, rt, shamt);
+  RB[rd] = rotate_right(RB[rt], shamt);
+  dbg_printf("Result = %#x\n", RB[rd]);
+}
+
+void ac_behavior( rotrv )
+{
+  dbg_printf("rotrv r%d, r%d, r%d\n", rd, rt, rs);
+  RB[rd] = rotate_right(RB[rt], RB[rs]);
+  dbg_printf("Result = %#x\n", RB[rd]);
+}
+
 void ac_behavior( clz )
 {
   dbg_printf("clz %%%d, %%%d\n", rd, rs);

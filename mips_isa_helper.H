@@ -26,6 +26,11 @@ static inline int32_t sign_extend(int32_t word, int word_length) {
   return ((x ^ m) - m);
 }
 
+static inline uint32_t rotate_right(uint32_t input, uint32_t shiftamount) {
+  return (((uint32_t)input) >> shiftamount) |
+         (((uint32_t)input) << (32 - shiftamount));
+}
+
 inline double load_double(uint32_t index) {
   double res;
   uint64_t input = ((uint64_t)RBF[index]) + (((uint64_t)RBF[index + 1]) << 32);

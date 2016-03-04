@@ -1,9 +1,4 @@
 /**
- * @file      mips_isa.ac
- * @author    Sandro Rigo
- *            Marcus Bartholomeu
- *            Alexandro Baldassin (acasm information)
- *
  *            The ArchC Team
  *            http://www.archc.org/
  *
@@ -11,12 +6,7 @@
  *            IC-UNICAMP
  *            http://www.lsc.ic.unicamp.br/
  *
- * @version   1.0
- * @date      Thu, 29 Jun 2006 14:49:08 -0300
- *
- * @brief     The ArchC MIPS-I functional model.
- *
- * @attention Copyright (C) 2002-2006 --- The ArchC Team
+ * @brief     The ArchC mips32r2 functional model.
  *
  */
 
@@ -56,7 +46,7 @@ AC_ISA(mips){
   ac_instr<Type_R> mul, clz;
 
   // mips32r2
-  ac_instr<Type_R> seb, seh, ext;
+  ac_instr<Type_R> seb, seh, ext, rotr, rotrv;
 
   // FPU instructions - mips-I
   ac_instr<Type_R> absd, abss, addd, adds, ceqd, ceqs, coled, coles, coltd;
@@ -398,6 +388,12 @@ AC_ISA(mips){
 
     ext.set_asm("ext %reg, %reg, %imm, %imm", rt, rs, shamt, rd);
     ext.set_decoder(op=0x1F, func=0x00);
+
+    rotr.set_asm("rotr %reg, %reg, %imm", rd, rt, shamt);
+    rotr.set_decoder(op=0x00, rs=0x01, func=0x02);
+
+    rotrv.set_asm("rotrv %reg, %reg, %reg", rd, rt, rs);
+    rotrv.set_decoder(op=0x00, shamt=0x01, func=0x06);
 
     absd.set_asm("abs.d %freg, %freg", shamt, rd);
     absd.set_decoder(op=0x11, rs=17, rt=0, func=0x05);

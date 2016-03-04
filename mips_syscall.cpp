@@ -167,6 +167,31 @@ bool mips_syscall::is_mmap_anonymous(uint32_t flags) {
   return flags & 0x800;
 }
 
+uint32_t mips_syscall::convert_open_flags(uint32_t flags) {
+  uint32_t dst = 0;
+  dst |= (flags & 00000)? O_RDONLY : 0;
+  dst |= (flags & 00001)? O_WRONLY : 0;
+  dst |= (flags & 00002)? O_RDWR   : 0;
+  dst |= (flags & 001000)? O_CREAT  : 0;
+  dst |= (flags & 004000)? O_EXCL   : 0;
+  dst |= (flags & 0100000)? O_NOCTTY   : 0;
+  dst |= (flags & 02000)? O_TRUNC    : 0;
+  dst |= (flags & 00010)? O_APPEND   : 0;
+  dst |= (flags & 040000)? O_NONBLOCK : 0;
+  dst |= (flags & 020000)? O_SYNC  : 0;
+  // We don't know the mapping of these:
+  //    dst |= (flags & 020000)? O_ASYNC   : 0;
+  //    dst |= (flags & 0100000)? O_LARGEFILE  : 0;
+  //    dst |= (flags & 0200000)? O_DIRECTORY  : 0;
+  //    dst |= (flags & 0400000)? O_NOFOLLOW   : 0;
+  //    dst |= (flags & 02000000)? O_CLOEXEC   : 0;
+  //    dst |= (flags & 040000)? O_DIRECT      : 0;
+  //    dst |= (flags & 01000000)? O_NOATIME   : 0;
+  //    dst |= (flags & 010000000)? O_PATH     : 0;
+  //    dst |= (flags & 010000)? O_DSYNC       : 0;
+  return dst;
+}
+
 
 // MIPS syscalls mapping for process simulators
 //

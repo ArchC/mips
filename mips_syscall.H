@@ -42,6 +42,7 @@ public:
   void set_return(unsigned val);
   unsigned get_return();
   bool is_mmap_anonymous(uint32_t flags);
+  uint32_t convert_open_flags(uint32_t flags);
 };
 
 #endif

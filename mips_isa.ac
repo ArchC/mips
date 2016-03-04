@@ -64,7 +64,7 @@ AC_ISA(mips){
   ac_instr<Type_R> madds, msubs, movns, movts, movfs, movzs;
 
   // FPU instructions - mips32r2
-  ac_instr<Type_R> mfhc1, mthc1, ldxc1, sdxc1;
+  ac_instr<Type_R> mfhc1, mthc1, ldxc1, sdxc1, lwxc1, swxc1;
 
   // gas MIPS specific register names
   ac_asm_map reg {
@@ -562,6 +562,12 @@ AC_ISA(mips){
 
     sdxc1.set_asm("sdxc1 %freg, %reg (%reg)", rd, rt, rs);
     sdxc1.set_decoder(op=0x13, shamt=0, func=0x09);
+
+    lwxc1.set_asm("lwxc1 %freg, %reg (%reg)", shamt, rt, rs);
+    lwxc1.set_decoder(op=0x13, rd=0, func=0x00);
+
+    swxc1.set_asm("swxc1 %freg, %reg (%reg)", rd, rt, rs);
+    swxc1.set_decoder(op=0x13, shamt=0, func=0x08);
 
     pseudo_instr("li %reg, %imm") {
       "lui %0, \%hi(%1)";

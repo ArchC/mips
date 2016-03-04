@@ -122,6 +122,14 @@ void ac_behavior( ldxc1 )
   dbg_printf("Result = %lf\n", temp);
 }
 
+void ac_behavior( lwxc1 )
+{
+  dbg_printf("lwxc1 %%f%d, %%%d(%%%d)\n", shamt, rt, rs);
+  RBF[shamt] = DATA_PORT->read(RB[rt]+ RB[rs]);
+  float temp = load_float(shamt);
+  dbg_printf("Result = %f\n", temp);
+}
+
 void ac_behavior( lwl )
 {
   dbg_printf("lwl r%d, %d(r%d)\n", rt, imm & 0xFFFF, rs);
@@ -536,6 +544,12 @@ void ac_behavior( sdxc1 )
   dbg_printf("sdxc1 %%f%d, %%%d(%%%d)\n", rd, rt, rs);
   DATA_PORT->write(RB[rt] + RB[rs] + 4, RBF[rd]);
   DATA_PORT->write(RB[rt] + RB[rs], RBF[rd + 1]);
+}
+
+void ac_behavior( swxc1 )
+{
+  dbg_printf("swxc1 %%f%d, %%%d(%%%d)\n", rd, rt, rs);
+  DATA_PORT->write(RB[rt] + RB[rs], RBF[rd]);
 }
 
 void ac_behavior( mfhc1 )

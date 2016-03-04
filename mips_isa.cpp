@@ -324,6 +324,14 @@ void ac_behavior( truncwd )
   dbg_printf("Result = %d\n", RBF[shamt]);
 }
 
+void ac_behavior( sqrtd )
+{
+  dbg_printf("sqrt.d %%f%d, %%f%d\n", shamt, rd);
+  double res = sqrt(load_double(rd));
+  save_double(res, shamt);
+  dbg_printf("Result = %lf\n", res);
+}
+
 void ac_behavior( bc1f )
 {
   dbg_printf("bc1f %d\n", imm & 0xFFFF);
@@ -1047,6 +1055,24 @@ void ac_behavior( movt )
   if (cc != 0)
     RB[rd] = RB[rs];
   dbg_printf("Result = %#x\n", RB[rd]);
+}
+
+void ac_behavior( movtd )
+{
+  dbg_printf("movt.d %%f%d, %%f%d, %%fcc0\n", shamt, rd);
+  if (cc != 0) {
+    RBF[shamt] = RBF[rd];
+    RBF[shamt + 1] = RBF[rd + 1];
+  }
+}
+
+void ac_behavior( movfd )
+{
+  dbg_printf("movf.d %%f%d, %%f%d, %%fcc0\n", shamt, rd);
+  if (cc == 0) {
+    RBF[shamt] = RBF[rd];
+    RBF[shamt + 1] = RBF[rd + 1];
+  }
 }
 
 void ac_behavior( maddd )

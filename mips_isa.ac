@@ -64,8 +64,11 @@ AC_ISA(mips){
   ac_instr<Type_R> truncwd;
   ac_instr<Type_I> bc1tl, bc1t, bc1f, bc1fl, sdc1, ldc1, swc1, lwc1;
 
+  // FPU instructions - mips-II
+  ac_instr<Type_R> sqrtd;
+
   // FPU instructions - mips IV
-  ac_instr<Type_R> movf, movt, maddd, msubd, movzd, movnd;
+  ac_instr<Type_R> movf, movt, maddd, msubd, movzd, movnd, movtd, movfd;
 
   // FPU instructions - mips32r2
   ac_instr<Type_R> mfhc1, mthc1, ldxc1, sdxc1;
@@ -366,6 +369,12 @@ AC_ISA(mips){
     movnd.set_asm("movn.d %freg, %freg, %reg", shamt, rd, rt);
     movnd.set_decoder(op=0x11, rs=17, func=0x13);
 
+    movtd.set_asm("movt.d %freg, %freg, fcc0", shamt, rd);
+    movtd.set_decoder(op=0x11, rs=17, rt=0x1, func=0x11);
+
+    movfd.set_asm("movf.d %freg, %freg, fcc0", shamt, rd);
+    movfd.set_decoder(op=0x11, rs=17, rt=0x0, func=0x11);
+
     seb.set_asm("seb %reg, %reg", rd, rt);
     seb.set_decoder(op=0x1F, shamt=0x10, func=0x20);
 
@@ -443,6 +452,9 @@ AC_ISA(mips){
 
     lwc1.set_asm("lwc1 %freg, %imm (%reg)", rt, imm, rs);
     lwc1.set_decoder(op=0x31);
+
+    sqrtd.set_asm("sqrt.d %freg, %freg", shamt, rd);
+    sqrtd.set_decoder(op=0x11, rs=17, rt=0, func=0x04);
 
     bc1t.set_asm("bc1t %exp(pcrel)", imm);
     bc1t.set_decoder(op=0x11, rs=0x08, rt=0x01);

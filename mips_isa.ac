@@ -61,7 +61,7 @@ AC_ISA(mips){
   // FPU instructions - mips-I
   ac_instr<Type_R> absd, addd, ceqd, coled, coltd, cueqd, culed, cultd, cund;
   ac_instr<Type_R> cvtdw, divd, mfc1, movd, muld, mtc1, negd, subd, truncwd;
-  ac_instr<Type_I> bc1tl, bc1t, bc1f, bc1fl, sdc1, ldc1;
+  ac_instr<Type_I> bc1tl, bc1t, bc1f, bc1fl, sdc1, ldc1, swc1, lwc1;
 
   // FPU instructions - mips IV
   ac_instr<Type_R> movf, movt, maddd, msubd, movzd, movnd;
@@ -433,6 +433,12 @@ AC_ISA(mips){
 
     ldc1.set_asm("ldc1 %freg, %imm (%reg)", rt, imm, rs);
     ldc1.set_decoder(op=0x35);
+
+    swc1.set_asm("swc1 %freg, %imm (%reg)", rt, imm, rs);
+    swc1.set_decoder(op=0x39);
+
+    lwc1.set_asm("lwc1 %freg, %imm (%reg)", rt, imm, rs);
+    lwc1.set_decoder(op=0x31);
 
     bc1t.set_asm("bc1t %exp(pcrel)", imm);
     bc1t.set_decoder(op=0x11, rs=0x08, rt=0x01);

@@ -31,10 +31,18 @@ public:
   void get_buffer(int argn, unsigned char* buf, unsigned int size);
   void set_buffer(int argn, unsigned char* buf, unsigned int size);
   void set_buffer_noinvert(int argn, unsigned char* buf, unsigned int size);
+  void host2guestmemcpy(uint32_t dst, unsigned char *src, unsigned int size);
+  void guest2hostmemcpy(unsigned char *dst, uint32_t src, unsigned int size);
   int  get_int(int argn);
   void set_int(int argn, int val);
   void return_from_syscall();
   void set_prog_args(int argc, char **argv);
+  int *get_syscall_table();
+  void set_pc(unsigned val);
+  void set_return(unsigned val);
+  unsigned get_return();
+  bool is_mmap_anonymous(uint32_t flags);
+  uint32_t convert_open_flags(uint32_t flags);
 };
 
 #endif

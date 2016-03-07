@@ -1,7 +1,28 @@
-MIPS ArchC functional model
+mips32r2 ArchC functional model
 =====
 
-This is the MIPS ArchC functional model.
+This is the mips32r2 ArchC functional model.
+
+Current status
+--------------
+This model was a MIPS-I implementation and was updated to mips32r2 with
+hardware floating-point support.
+
+Currently it supports quite a few MIPS32r2 instructions, enough to compile
+Mibench programs and run them correctly. However, this implementation does not
+feature all instructions from the ISA specification, but only those appearing in
+benchmarks. If you run into an implemented instruction, you can easily expand
+this model.
+
+The easiest way you can compile a program to mips32r2 is by using the ecc
+compiler (http://ellcc.org/blog/?page_id=313) based on Clang/LLVM. Example:
+
+    ecc -target mips-linux-eng hello.c -o hello
+    mips.x --load=hello
+
+It is possible that your program uses an unimplemented syscall, since this is
+not a system simulator, but a process simulator. If this syscall is crucial to
+your program, you may need to expand ArchC to implement it.
 
 License
 -------
@@ -10,22 +31,11 @@ License
 
 acsim
 -----
-This model has the system call emulation functions implemented,
-so it is a good idea to turn on the ABI option.
 
-To use acsim, the interpreted simulator:
-
-    acsim mips.ac -abi                 (create the simulator)
-    make                               (compile)
-    mips.x --load=<file-path> [args]   (run an application)
-
-The [args] are optional arguments for the application.
-
-There are two formats recognized for application <file-path>:
-- ELF binary matching ArchC specifications
-- hexadecimal text file for ArchC
-
-
+    acsim mips.ac -abi -nw             (create the simulator)
+    make                               (compile it)
+    ecc -target mips-linux-eng hello.c -o hello
+    mips.x --load=hello                (compile and run hello world program)
 
 Binary utilities
 ----------------

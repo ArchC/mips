@@ -121,5 +121,9 @@ void mips_syscall::set_prog_args(int argc, char **argv)
   procNumber ++;
 }
 
-
+void mips_syscall::_exit() {
+    DEBUG_SYSCALL("_exit");
+    int ac_exit_status = RB[2]; //v0
+    ref.stop(ac_exit_status);
+}
 

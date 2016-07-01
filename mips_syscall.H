@@ -35,6 +35,8 @@ public:
   void set_int(int argn, int val);
   void return_from_syscall();
   void set_prog_args(int argc, char **argv);
+
+  void _exit();
 };
 
 #endif

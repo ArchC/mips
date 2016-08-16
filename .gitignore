@@ -18,6 +18,7 @@ mips_isa.cpp.tmpl
 mips_isa_init.cpp
 mips_parms.H
 mips_syscall.H.tmpl
+mips_syscall.cpp.tmpl
 mips_ih_bhv_macros.H
 mips_intr_handlers.H
 mips_intr_handlers.cpp*

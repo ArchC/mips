@@ -933,8 +933,8 @@ void ac_behavior( jr )
   // Jump to the address stored on the register reg[RS]
   // It must also flush the instructions that were loaded into the pipeline
 #ifndef NO_NEED_PC_UPDATE
-  npc = RB[rs], 1;
-#endif
+  npc = RB[rs], (void) 1;
+#endif 
   dbg_printf("Target = %#x\n", RB[rs]);
 }
 
@@ -945,8 +945,8 @@ void ac_behavior( jalr )
   // jump to the address given by [rs]
 
 #ifndef NO_NEED_PC_UPDATE
-  npc = RB[rs], 1;
-#endif
+  npc = RB[rs], (void) 1;
+#endif 
   dbg_printf("Target = %#x\n", RB[rs]);
 
   if( rd == 0 )  //If rd is not defined use default
@@ -982,8 +982,8 @@ void ac_behavior( blez )
   dbg_printf("blez r%d, %d\n", rs, imm & 0xFFFF);
   if( (RB[rs] == 0 ) || (RB[rs]&0x80000000 ) ){
 #ifndef NO_NEED_PC_UPDATE
-    npc = ac_pc + (imm<<2), 1;
-#endif
+    npc = ac_pc + (imm<<2), (void) 1;
+#endif 
     dbg_printf("Taken to %#x\n", ac_pc + (imm<<2));
   }
 }

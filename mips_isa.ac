@@ -524,7 +524,7 @@ AC_ISA(mips){
     bc1t.set_asm("bc1t %exp(pcrel)", imm);
     bc1t.set_decoder(op=0x11, rs=0x08, rt=0x01);
 
-    bc1tl.set_asm("bc1t %exp(pcrel)", imm);
+    bc1tl.set_asm("bc1tl %exp(pcrel)", imm);
     bc1tl.set_decoder(op=0x11, rs=0x08, rt=0x03);
 
     bc1f.set_asm("bc1f %exp(pcrel)", imm);

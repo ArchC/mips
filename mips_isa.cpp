@@ -423,7 +423,7 @@ void ac_behavior( mtc1 )
 void ac_behavior( negd )
 {
   dbg_printf("neg.d %%f%d, %%f%d\n", shamt, rd);
-  double res = - load_double(rt);
+  double res = - load_double(rd);
   save_double(res, shamt);
   dbg_printf("Result = %lf\n", res);
 }
@@ -431,7 +431,7 @@ void ac_behavior( negd )
 void ac_behavior( negs )
 {
   dbg_printf("neg.s %%f%d, %%f%d\n", shamt, rd);
-  float res = - load_float(rt);
+  float res = - load_float(rd);
   save_float(res, shamt);
   dbg_printf("Result = %f\n", res);
 }
